@@ -25,6 +25,17 @@ public struct FitTarget: Sendable {
     public var source: TargetSource
 }
 
+/// The finished measurements to grade to, plus notes on measurements that
+/// couldn't be used.
+public struct FitPlan: Sendable {
+    public var targets: [FitTarget]
+    public var notes: [String]
+
+    public var gradeTargets: [GarmentMeasure: Double] {
+        Dictionary(targets.map { ($0.dimension, $0.finished) }) { first, _ in first }
+    }
+}
+
 /// Turns body measurements into the finished measurements to grade to.
 public enum EaseModel {
     public static func targets(
@@ -34,6 +45,16 @@ public enum EaseModel {
         finishedOverrides: [GarmentMeasure: Double] = [:],
         options: [String: Double] = [:]
     ) throws -> [FitTarget] {
+        try plan(for: pattern, body: body, easeOverrides: easeOverrides, finishedOverrides: finishedOverrides, options: options).targets
+    }
+
+    public static func plan(
+        for pattern: Pattern,
+        body: [BodyMeasure: Double],
+        easeOverrides: [GarmentMeasure: Double] = [:],
+        finishedOverrides: [GarmentMeasure: Double] = [:],
+        options: [String: Double] = [:]
+    ) throws -> FitPlan {
         let grader = try Grader(pattern: pattern)
         let active = try grader.activeSchematic(options: pattern.defaultOptions.merging(options) { _, new in new })
         guard let chestEntry = active.first(where: { $0.dimension == pattern.primaryDimension }) else {
@@ -41,6 +62,7 @@ public enum EaseModel {
         }
         let primary = pattern.primaryDimension
         var out: [FitTarget] = []
+        var notes: [String] = []
 
         // Chest first: everything else is read off at this chest.
         let chestFinished: Double
@@ -83,12 +105,19 @@ public enum EaseModel {
                 let perSize = zip(entry.values, bodyChests).compactMap { finished, chest in
                     StandardSizing.estimate(bm, chest: chest).map { finished - $0 }
                 }
-                guard perSize.count == entry.values.count else { continue }
+                guard perSize.count == entry.values.count else {
+                    notes.append(
+                        "\(bm.label) is measured, but the pattern doesn't say how much ease the \(d.label.lowercased()) has "
+                            + "and the standard charts don't cover it. Enter the \(d.label.lowercased()) ease you want to use it; "
+                            + "until then it follows the designer's grading."
+                    )
+                    continue
+                }
                 ease = Interpolation.at(xs: chestEntry.values, ys: perSize, x: chestFinished)
                 source = .inferred
             }
             out.append(FitTarget(dimension: d, finished: b + ease, source: .bodyPlusEase(body: b, ease: ease, easeFrom: source)))
         }
-        return out
+        return FitPlan(targets: out, notes: notes)
     }
 }

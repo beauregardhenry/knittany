@@ -1,5 +1,6 @@
 import Foundation
 import KnitCore
+import KnitRender
 
 let usage = """
     knit regrade <pattern.json> --chest <body> [measurements] [options]
@@ -15,6 +16,8 @@ let usage = """
       --gauge <sts>x<rows>             your gauge per 10 cm, e.g. --gauge 22x30
       --option <id>=<number>           e.g. --option long=0
       --units cm|in                    which unit to show first (both are shown)
+      --pdf <file.pdf>                 write a PDF instead of text
+      --source-pdf <original.pdf>      include the original pages the pattern lists
 
     Dimensions: \(GarmentMeasure.allCases.map(\.rawValue).joined(separator: ", "))
     """
@@ -72,6 +75,8 @@ case "regrade":
     var options: [String: Double] = [:]
     var gauge: Gauge?
     var units = UnitPreference.cmFirst
+    var pdfOut: URL?
+    var sourcePDF: URL?
 
     while !args.isEmpty {
         let flag = args.removeFirst()
@@ -98,21 +103,30 @@ case "regrade":
             gauge = Gauge(stitchesPer10cm: parts[0], rowsPer10cm: parts[1], stitchPattern: pattern.gauge.stitchPattern)
         case "--units":
             units = value.hasPrefix("in") ? .inchFirst : .cmFirst
+        case "--pdf":
+            pdfOut = URL(fileURLWithPath: value)
+        case "--source-pdf":
+            sourcePDF = URL(fileURLWithPath: value)
         default:
             fail("Unknown flag \(flag)\n\n\(usage)")
         }
     }
 
     do {
-        let fit = try EaseModel.targets(
+        let plan = try EaseModel.plan(
             for: pattern, body: body, easeOverrides: ease, finishedOverrides: finished, options: options
         )
-        var targets: [GarmentMeasure: Double] = [:]
-        for t in fit { targets[t.dimension] = t.finished }
         let result = try Grader(pattern: pattern).grade(
-            GradeRequest(targets: targets, gauge: gauge, options: options, units: units)
+            GradeRequest(targets: plan.gradeTargets, gauge: gauge, options: options, units: units)
         )
-        print(TextReport.render(result, fit: fit))
+        if let pdfOut {
+            let data = try PDFExporter.export(result, plan: plan, options: .init(sourcePDF: sourcePDF))
+            try data.write(to: pdfOut)
+            print("Wrote \(pdfOut.path)")
+        } else {
+            print(TextReport.render(result, fit: plan.targets))
+            for note in plan.notes { print("Note: \(note)") }
+        }
     } catch {
         fail("Couldn't regrade: \(error)")
     }

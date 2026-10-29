@@ -8,7 +8,7 @@ published sizes, or with specific changes such as a longer body or wider hips.
 
 | Folder | What it is |
 |---|---|
-| `KnitCore/` | Swift package with all the knitting maths, the `knit` command-line tool and the tests |
+| `KnitCore/` | Swift package: `KnitCore` (the knitting maths and the library of people, patterns and projects), `KnitRender` (schematic and chart drawing, PDF export), the `knit` command-line tool, and the tests |
 | `App/` | The Mac app (SwiftUI). `project.yml` generates `Knitting.xcodeproj` with [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | `Patterns/` | Encoded patterns. **Not in git** (see below) |
 
@@ -61,6 +61,14 @@ cd App && xcodegen generate && xcodebuild -project Knitting.xcodeproj -scheme Kn
 The app is ad-hoc signed for now; Developer ID signing and notarization come
 once the Apple Developer account is set up.
 
+## Using the app
+
+1. **People**: add the person and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates for reference; regrading uses only what you measured.
+2. **Patterns**: import a pattern file, then attach the original PDF so its chart pages are included.
+3. **New Project** (on the pattern): pick the person and version. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
+
+Everything is kept as plain files in `~/Library/Application Support/Knitting/` (backed up by Time Machine). Deleted patterns go to the Trash.
+
 ## Pattern files and this public repo
 
 Encoded patterns contain the designers' instructions, so `Patterns/` is
@@ -71,7 +79,7 @@ holds a made-up pattern that is safe to publish.
 ## Roadmap
 
 1. ✅ Engine, Dipped Arms, designer check, text output
-2. Mac app: people and measurements, pattern library, schematic and chart drawings, PDF export
+2. ✅ Mac app: people and measurements, pattern library, projects, schematic and chart drawings, PDF export
 3. PDF import: offline (default) and AI-assisted (optional), with a check-and-correct screen
 4. Circular yoke (Marled Mania)
 5. Raglan and set-in sleeves, then other top-down constructions

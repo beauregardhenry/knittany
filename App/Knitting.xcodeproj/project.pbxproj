@@ -7,16 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		013AC68A60F040C427837E23 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F28E76C445D7DD0C92FF35 /* ContentView.swift */; };
+		126CD60B6F7E9371AFE932E6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E53E0D182170B29D4AEF65 /* RootView.swift */; };
 		1789A07A5D7E7336A5FE94DC /* KnitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7B807E4381F1E02BD5CC344C /* KnitCore */; };
+		1EA32B78EFB3E7E5EF44DFE1 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EF60011A75D674021247CE /* ProjectView.swift */; };
+		24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */; };
+		7D250287DC97431C4718CB06 /* KnitRender in Frameworks */ = {isa = PBXBuildFile; productRef = 323275201F7584CE5EDFD59E /* KnitRender */; };
+		B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54770BE37041D9FAC3D4C261 /* Fields.swift */; };
+		C65050E8CA3D095CD2C96D95 /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE2839928216D998879067 /* PersonView.swift */; };
 		CECADE096DC4EECC32383D4A /* KnittingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104E554D2F5770152941B41F /* KnittingApp.swift */; };
+		EB765351D3309E1BD091ACC8 /* PatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227F539979EA03D3FCA0FFE6 /* PatternView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		104E554D2F5770152941B41F /* KnittingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnittingApp.swift; sourceTree = "<group>"; };
+		227F539979EA03D3FCA0FFE6 /* PatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternView.swift; sourceTree = "<group>"; };
+		27EF60011A75D674021247CE /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
+		54770BE37041D9FAC3D4C261 /* Fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fields.swift; sourceTree = "<group>"; };
 		6662AFD598C41E5CC43505BC /* Knitting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Knitting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EAF1EA9589BB67616C06F0C /* KnitCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KnitCore; path = ../KnitCore; sourceTree = SOURCE_ROOT; };
-		B4F28E76C445D7DD0C92FF35 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6ECE2839928216D998879067 /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
+		85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryModel.swift; sourceTree = "<group>"; };
+		B3E53E0D182170B29D4AEF65 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -25,6 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1789A07A5D7E7336A5FE94DC /* KnitCore in Frameworks */,
+				7D250287DC97431C4718CB06 /* KnitRender in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,8 +55,13 @@
 		690AA9D6BA54E5B65597374F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B4F28E76C445D7DD0C92FF35 /* ContentView.swift */,
+				54770BE37041D9FAC3D4C261 /* Fields.swift */,
 				104E554D2F5770152941B41F /* KnittingApp.swift */,
+				85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */,
+				227F539979EA03D3FCA0FFE6 /* PatternView.swift */,
+				6ECE2839928216D998879067 /* PersonView.swift */,
+				27EF60011A75D674021247CE /* ProjectView.swift */,
+				B3E53E0D182170B29D4AEF65 /* RootView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -82,6 +99,7 @@
 			name = Knitting;
 			packageProductDependencies = (
 				7B807E4381F1E02BD5CC344C /* KnitCore */,
+				323275201F7584CE5EDFD59E /* KnitRender */,
 			);
 			productName = Knitting;
 			productReference = 6662AFD598C41E5CC43505BC /* Knitting.app */;
@@ -128,8 +146,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				013AC68A60F040C427837E23 /* ContentView.swift in Sources */,
+				B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */,
 				CECADE096DC4EECC32383D4A /* KnittingApp.swift in Sources */,
+				24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */,
+				EB765351D3309E1BD091ACC8 /* PatternView.swift in Sources */,
+				C65050E8CA3D095CD2C96D95 /* PersonView.swift in Sources */,
+				1EA32B78EFB3E7E5EF44DFE1 /* ProjectView.swift in Sources */,
+				126CD60B6F7E9371AFE932E6 /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +361,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		323275201F7584CE5EDFD59E /* KnitRender */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KnitRender;
+		};
 		7B807E4381F1E02BD5CC344C /* KnitCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KnitCore;

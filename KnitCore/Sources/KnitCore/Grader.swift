@@ -44,6 +44,8 @@ public struct GradeResult: Sendable {
     public var position: String
     public var warnings: [String]
     public var sections: [RenderedSection]
+    public var charts: [Chart]
+    public var sourcePages: [SourcePage]
     public var gauge: Gauge
     public var options: [String: Double]
     public var formatter: MeasureFormatter
@@ -156,6 +158,9 @@ public struct Grader {
             sections.append(RenderedSection(title: section.title, lines: lines))
         }
 
+        let charts = try (pattern.charts ?? []).filter { try $0.when.map(evaluator.condition) ?? true }
+        let sourcePages = try (pattern.sourcePages ?? []).filter { try $0.when.map(evaluator.condition) ?? true }
+
         return GradeResult(
             pattern: pattern,
             values: values,
@@ -163,6 +168,8 @@ public struct Grader {
             position: describePosition(primaryTarget, xs: primaryXs),
             warnings: warnings,
             sections: sections,
+            charts: charts,
+            sourcePages: sourcePages,
             gauge: knitterGauge,
             options: options,
             formatter: MeasureFormatter(preference: request.units)

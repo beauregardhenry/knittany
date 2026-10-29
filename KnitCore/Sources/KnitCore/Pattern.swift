@@ -8,6 +8,7 @@ public struct Pattern: Codable, Sendable {
     public var designer: String?
     public var source: String?
     public var construction: String?
+    public var garment: GarmentType?
     public var sizes: [String]
     public var gauge: Gauge
     /// The measurement that picks the size (almost always chest).
@@ -19,6 +20,8 @@ public struct Pattern: Codable, Sendable {
     public var quantities: [Quantity]
     public var checks: [PatternCheck]?
     public var sections: [Section]
+    public var charts: [Chart]?
+    public var sourcePages: [SourcePage]?
 
     public static func load(from url: URL) throws -> Pattern {
         let pattern = try JSONDecoder().decode(Pattern.self, from: Data(contentsOf: url))
@@ -45,6 +48,9 @@ public struct Pattern: Codable, Sendable {
         guard schematic.contains(where: { $0.dimension == primaryDimension }) else {
             throw PatternError("the schematic has no \(primaryDimension.rawValue) measurement")
         }
+        for chart in charts ?? [] {
+            try chart.validate()
+        }
     }
 
     public var defaultOptions: [String: Double] {
@@ -63,6 +69,11 @@ public struct Pattern: Codable, Sendable {
         }
         return p
     }
+}
+
+public enum GarmentType: String, Codable, Sendable {
+    case pullover
+    case cardigan
 }
 
 public struct PatternError: Error, CustomStringConvertible {

@@ -16,6 +16,8 @@ targets:
     dependencies:
       - package: KnitCore
         product: KnitCore
+      - package: KnitCore
+        product: KnitRender
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beauregardhenry.knitting
