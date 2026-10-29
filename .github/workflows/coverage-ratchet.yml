@@ -41,7 +41,8 @@ jobs:
         run: ./scripts/check-coverage.sh --update-if-higher
       - name: Commit and push the baseline if it changed
         run: |
-          if git diff --quiet -- coverage-baseline.txt; then
+          # git status, not git diff: on the first run the file is new, and git diff ignores new files.
+          if [[ -z "$(git status --porcelain -- coverage-baseline.txt)" ]]; then
             echo "No coverage increase to record."
             exit 0
           fi
