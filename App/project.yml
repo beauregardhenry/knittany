@@ -13,11 +13,22 @@ targets:
     type: application
     platform: macOS
     sources: [Sources]
+    info:
+      path: Info.plist
+      properties:
+        # Open a pattern PDF with Knitting (or drop it on the Dock icon) to import it.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: PDF pattern
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [com.adobe.pdf]
     dependencies:
       - package: KnitCore
         product: KnitCore
       - package: KnitCore
         product: KnitRender
+      - package: KnitCore
+        product: KnitImport
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beauregardhenry.knitting

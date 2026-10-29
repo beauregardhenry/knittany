@@ -16,6 +16,10 @@ final class LibraryModel {
     private(set) var index = LibraryIndex()
     var selection: SidebarItem?
     var errorMessage: String?
+    /// Shows the open panel for importing a pattern (File > Import Pattern…).
+    var choosingImport = false
+    /// A pattern PDF being read and reviewed.
+    var pdfImport: PDFImport?
     private var patternCache: [UUID: KnitCore.Pattern] = [:]
 
     /// `KNITTING_LIBRARY` points the app at another folder, for testing.
@@ -89,7 +93,16 @@ final class LibraryModel {
         }
     }
 
+    /// A PDF starts the read-and-review flow; a pattern file goes straight in.
     func importPattern(from url: URL) {
+        if url.pathExtension.lowercased() == "pdf" {
+            do {
+                pdfImport = try PDFImport(copying: url)
+            } catch {
+                errorMessage = "Couldn't open \(url.lastPathComponent): \(error)"
+            }
+            return
+        }
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         do {
@@ -97,6 +110,15 @@ final class LibraryModel {
             selection = .pattern(entry.id)
         } catch {
             errorMessage = "Couldn't import \(url.lastPathComponent): \(error)"
+        }
+    }
+
+    func savePattern(_ pattern: KnitCore.Pattern, sourcePDF: URL?) {
+        do {
+            let entry = try store.importPattern(pattern, sourcePDF: sourcePDF, into: &index)
+            selection = .pattern(entry.id)
+        } catch {
+            errorMessage = "Couldn't save \(pattern.name): \(error)"
         }
     }
 

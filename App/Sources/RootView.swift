@@ -4,7 +4,6 @@ import UniformTypeIdentifiers
 
 struct RootView: View {
     @Environment(LibraryModel.self) private var model
-    @State private var importingPattern = false
 
     var body: some View {
         @Bindable var model = model
@@ -29,7 +28,7 @@ struct RootView: View {
                     ForEach(model.patterns) { p in
                         Label(p.name, systemImage: "doc.richtext").tag(SidebarItem.pattern(p.id))
                     }
-                    Button("Import Pattern File…", systemImage: "square.and.arrow.down") { importingPattern = true }
+                    Button("Import Pattern…", systemImage: "square.and.arrow.down") { model.choosingImport = true }
                         .buttonStyle(.borderless)
                 }
             }
@@ -46,8 +45,21 @@ struct RootView: View {
                 WelcomeView()
             }
         }
-        .fileImporter(isPresented: $importingPattern, allowedContentTypes: [.json]) { result in
+        .fileImporter(isPresented: $model.choosingImport, allowedContentTypes: [.pdf, .json]) { result in
             if case .success(let url) = result { model.importPattern(from: url) }
+        }
+        .onOpenURL { url in
+            if url.isFileURL { model.importPattern(from: url) }
+        }
+        .onDrop(of: [.pdf, .fileURL], isTargeted: nil) { providers in
+            guard let provider = providers.first else { return false }
+            _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                if let url, url.isFileURL { Task { @MainActor in model.importPattern(from: url) } }
+            }
+            return true
+        }
+        .sheet(item: $model.pdfImport) { session in
+            PDFImportSheet(session: session)
         }
         .alert("Something went wrong", isPresented: Binding(
             get: { model.errorMessage != nil },
@@ -65,7 +77,7 @@ struct WelcomeView: View {
         VStack(spacing: 10) {
             Image(systemName: "scissors").font(.system(size: 40)).foregroundStyle(.secondary)
             Text("Knitting").font(.title)
-            Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern file.\n3. Open the pattern and choose New Project.")
+            Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF (or a pattern file) and check what was read.\n3. Open the pattern and choose New Project.")
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(.secondary)
         }

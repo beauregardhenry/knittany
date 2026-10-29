@@ -7,26 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1119F28476645845EACC8C74 /* KnitImport in Frameworks */ = {isa = PBXBuildFile; productRef = 7162045FF6FF3A344AC7BB4D /* KnitImport */; };
 		126CD60B6F7E9371AFE932E6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E53E0D182170B29D4AEF65 /* RootView.swift */; };
 		1789A07A5D7E7336A5FE94DC /* KnitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7B807E4381F1E02BD5CC344C /* KnitCore */; };
 		1EA32B78EFB3E7E5EF44DFE1 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EF60011A75D674021247CE /* ProjectView.swift */; };
 		24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */; };
+		422E9E7DCB84DEEA9F05C994 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08469460AAB3845E0D5D70B1 /* Keychain.swift */; };
+		6665CFDEC3BD57680831D44F /* PDFImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D409F5F48D5807180C0AF50 /* PDFImport.swift */; };
 		7D250287DC97431C4718CB06 /* KnitRender in Frameworks */ = {isa = PBXBuildFile; productRef = 323275201F7584CE5EDFD59E /* KnitRender */; };
+		B35A2A036778F5E4FD379FFF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */; };
 		B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54770BE37041D9FAC3D4C261 /* Fields.swift */; };
 		C65050E8CA3D095CD2C96D95 /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE2839928216D998879067 /* PersonView.swift */; };
 		CECADE096DC4EECC32383D4A /* KnittingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104E554D2F5770152941B41F /* KnittingApp.swift */; };
+		E5900B8390A11587966264C1 /* ImportReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */; };
 		EB765351D3309E1BD091ACC8 /* PatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227F539979EA03D3FCA0FFE6 /* PatternView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		08469460AAB3845E0D5D70B1 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		104E554D2F5770152941B41F /* KnittingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnittingApp.swift; sourceTree = "<group>"; };
 		227F539979EA03D3FCA0FFE6 /* PatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternView.swift; sourceTree = "<group>"; };
 		27EF60011A75D674021247CE /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		54770BE37041D9FAC3D4C261 /* Fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fields.swift; sourceTree = "<group>"; };
 		6662AFD598C41E5CC43505BC /* Knitting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Knitting.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportReviewView.swift; sourceTree = "<group>"; };
+		6D409F5F48D5807180C0AF50 /* PDFImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFImport.swift; sourceTree = "<group>"; };
 		6EAF1EA9589BB67616C06F0C /* KnitCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KnitCore; path = ../KnitCore; sourceTree = SOURCE_ROOT; };
 		6ECE2839928216D998879067 /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
 		85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryModel.swift; sourceTree = "<group>"; };
+		A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B3E53E0D182170B29D4AEF65 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -37,6 +46,7 @@
 			files = (
 				1789A07A5D7E7336A5FE94DC /* KnitCore in Frameworks */,
 				7D250287DC97431C4718CB06 /* KnitRender in Frameworks */,
+				1119F28476645845EACC8C74 /* KnitImport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,12 +66,16 @@
 			isa = PBXGroup;
 			children = (
 				54770BE37041D9FAC3D4C261 /* Fields.swift */,
+				6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */,
+				08469460AAB3845E0D5D70B1 /* Keychain.swift */,
 				104E554D2F5770152941B41F /* KnittingApp.swift */,
 				85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */,
 				227F539979EA03D3FCA0FFE6 /* PatternView.swift */,
+				6D409F5F48D5807180C0AF50 /* PDFImport.swift */,
 				6ECE2839928216D998879067 /* PersonView.swift */,
 				27EF60011A75D674021247CE /* ProjectView.swift */,
 				B3E53E0D182170B29D4AEF65 /* RootView.swift */,
+				A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -100,6 +114,7 @@
 			packageProductDependencies = (
 				7B807E4381F1E02BD5CC344C /* KnitCore */,
 				323275201F7584CE5EDFD59E /* KnitRender */,
+				7162045FF6FF3A344AC7BB4D /* KnitImport */,
 			);
 			productName = Knitting;
 			productReference = 6662AFD598C41E5CC43505BC /* Knitting.app */;
@@ -147,12 +162,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */,
+				E5900B8390A11587966264C1 /* ImportReviewView.swift in Sources */,
+				422E9E7DCB84DEEA9F05C994 /* Keychain.swift in Sources */,
 				CECADE096DC4EECC32383D4A /* KnittingApp.swift in Sources */,
 				24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */,
+				6665CFDEC3BD57680831D44F /* PDFImport.swift in Sources */,
 				EB765351D3309E1BD091ACC8 /* PatternView.swift in Sources */,
 				C65050E8CA3D095CD2C96D95 /* PersonView.swift in Sources */,
 				1EA32B78EFB3E7E5EF44DFE1 /* ProjectView.swift in Sources */,
 				126CD60B6F7E9371AFE932E6 /* RootView.swift in Sources */,
+				B35A2A036778F5E4FD379FFF /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +188,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Knitting;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -195,6 +215,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Knitting;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -364,6 +385,10 @@
 		323275201F7584CE5EDFD59E /* KnitRender */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = KnitRender;
+		};
+		7162045FF6FF3A344AC7BB4D /* KnitImport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KnitImport;
 		};
 		7B807E4381F1E02BD5CC344C /* KnitCore */ = {
 			isa = XCSwiftPackageProductDependency;

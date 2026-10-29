@@ -142,6 +142,24 @@ public struct LibraryStore: Sendable {
         return entry
     }
 
+    /// Saves a pattern built in the app (e.g. from an imported PDF) into the library.
+    public func importPattern(_ pattern: Pattern, sourcePDF: URL?, into index: inout LibraryIndex) throws -> PatternEntry {
+        try pattern.validate()
+        let id = UUID()
+        let fm = FileManager.default
+        try fm.createDirectory(at: folder(id), withIntermediateDirectories: true)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(pattern).write(to: patternURL(id), options: .atomic)
+        if let pdf = sourcePDF {
+            try fm.copyItem(at: pdf, to: sourcePDFURL(id))
+        }
+        let entry = PatternEntry(id: id, name: pattern.name, designer: pattern.designer, addedAt: Date(), hasSourcePDF: sourcePDF != nil)
+        index.patterns.append(entry)
+        try save(index)
+        return entry
+    }
+
     public func attachSourcePDF(_ pdf: URL, to id: UUID, in index: inout LibraryIndex) throws {
         let dest = sourcePDFURL(id)
         try? FileManager.default.removeItem(at: dest)

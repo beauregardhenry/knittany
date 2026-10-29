@@ -537,7 +537,13 @@ struct NumberTable {
         case .inch, .yard, .other, nil: break
         }
         let before = String(context[..<run.range.lowerBound].suffix(14)).lowercased()
-        if before.range(of: #"(?:\b[kp]|\bco|cast on|bo|bind off|pick up and k|pick up|pu|place|total|sts:?)\s*$"#, options: .regularExpression) != nil {
+        if before.range(of: #"(?:\b[kp]|\b[kp] to|\bco|cast on|bo|bind off|pick up and k|pick up|pu|place|total|sts:?)\s*$"#, options: .regularExpression) != nil {
+            return .stitches
+        }
+        // "… 62 (65, 68) for each front", in a sentence counting stitches.
+        let sentence = Reader.sentence(around: run.range, in: context).lowercased()
+        if sentence.hasPrefix("total") || sentence.range(of: #"\bsts\b|stitches"#, options: .regularExpression) != nil,
+           !sentence.contains("times"), !sentence.contains("rows"), !sentence.contains("rnds") {
             return .stitches
         }
         return .count
