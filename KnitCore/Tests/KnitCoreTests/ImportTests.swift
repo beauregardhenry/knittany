@@ -71,11 +71,11 @@ struct OfflineReaderTests {
     let draft: ImportDraft
 
     init() throws {
-        draft = try OfflineReader.read(SamplePDF.url())
+        draft = try OfflineReader.read(SamplePDF.url(), ocr: false)
     }
 
     @Test func readsColumnsInOrder() throws {
-        let pages = try PDFTextReader.read(SamplePDF.url())
+        let pages = try PDFTextReader.read(SamplePDF.url(), ocr: false)
         let texts = pages[0].paragraphs.map(\.text)
         let co = try #require(texts.firstIndex { $0.hasPrefix("CO 92") })
         let row2 = try #require(texts.firstIndex { $0.hasPrefix("Row 2") })
@@ -130,6 +130,34 @@ struct OfflineReaderTests {
         #expect(problems.contains { $0.contains("finished chest") })
         #expect(problems.contains { $0.contains("{nope}") })
         #expect(throws: PatternError.self) { try DraftBuilder.pattern(from: d) }
+    }
+}
+
+/// Vision's text recognition can block indefinitely on CI's virtual Macs, so OCR is only tested
+/// on a real Mac (GitHub Actions sets CI=true).
+@Suite("Reading scanned pages", .enabled(if: ProcessInfo.processInfo.environment["CI"] == nil))
+struct OCRTests {
+    @Test func readsAPageWithoutText() throws {
+        // A page with its text drawn as an image has no text layer, so it's read with OCR.
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("scan-\(UUID().uuidString).pdf")
+        var media = CGRect(x: 0, y: 0, width: 595, height: 842)
+        let ctx = try #require(CGContext(url as CFURL, mediaBox: &media, nil))
+        let image = NSImage(size: NSSize(width: 1200, height: 300), flipped: false) { rect in
+            NSColor.white.setFill()
+            rect.fill()
+            NSAttributedString(string: "CO 92 (102, 112) sts", attributes: [.font: NSFont.systemFont(ofSize: 90)])
+                .draw(at: NSPoint(x: 40, y: 100))
+            return true
+        }
+        let cg = try #require(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        ctx.beginPDFPage(nil)
+        ctx.draw(cg, in: CGRect(x: 40, y: 600, width: 500, height: 125))
+        ctx.endPDFPage()
+        ctx.closePDF()
+        let pages = try PDFTextReader.read(url)
+        #expect(pages[0].ocr)
+        #expect(pages[0].paragraphs.map(\.text).joined().contains("102"))
+        #expect(try PDFTextReader.read(url, ocr: false)[0].paragraphs.isEmpty)
     }
 }
 

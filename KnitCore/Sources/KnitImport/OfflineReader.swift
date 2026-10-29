@@ -7,8 +7,8 @@ import KnitCore
 /// Each such number becomes a value graded along the finished measurement it
 /// follows most closely, and the sentence it sits in becomes a template.
 public enum OfflineReader {
-    public static func read(_ pdf: URL) throws -> ImportDraft {
-        try read(pages: PDFTextReader.read(pdf), fileName: pdf.deletingPathExtension().lastPathComponent)
+    public static func read(_ pdf: URL, ocr: Bool = true) throws -> ImportDraft {
+        try read(pages: PDFTextReader.read(pdf, ocr: ocr), fileName: pdf.deletingPathExtension().lastPathComponent)
     }
 
     public static func read(pages: [PageText], fileName: String) throws -> ImportDraft {

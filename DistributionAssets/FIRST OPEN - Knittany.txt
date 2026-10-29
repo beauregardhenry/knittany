@@ -1,0 +1,18 @@
+KNITTANY — OPENING IT FOR THE FIRST TIME
+
+1. Drag Knittany into your Applications folder.
+2. Open Knittany.
+
+This build isn't signed with an Apple Developer ID yet, so the first time you
+open it macOS says it can't check the app for malicious software. To open it
+anyway:
+
+  - Click Done (not Move to Trash).
+  - Open System Settings > Privacy & Security, scroll down to the message about
+    Knittany, and click Open Anyway. Confirm with your password or Touch ID.
+
+You only need to do this once. Later releases will be signed and notarized,
+and this step goes away.
+
+Your library (people, patterns and projects) is kept in
+~/Library/Application Support/Knittany and is backed up by Time Machine.
