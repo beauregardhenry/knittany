@@ -58,7 +58,8 @@ public enum EaseModel {
         body: [BodyMeasure: Double],
         easeOverrides: [GarmentMeasure: Double] = [:],
         finishedOverrides: [GarmentMeasure: Double] = [:],
-        options: [String: Double] = [:]
+        options: [String: Double] = [:],
+        chart: SizeChart = .women
     ) throws -> FitPlan {
         let grader = try Grader(pattern: pattern)
         let active = try grader.activeSchematic(options: pattern.defaultOptions.merging(options) { _, new in new })
@@ -108,7 +109,7 @@ public enum EaseModel {
                 (ease, source) = (e, .designer)
             } else {
                 let perSize = zip(entry.values, bodyChests).compactMap { finished, chest in
-                    StandardSizing.estimate(bm, chest: chest).map { finished - $0 }
+                    chart.estimate(bm, chest: chest).map { finished - $0 }
                 }
                 guard perSize.count == entry.values.count else {
                     notes.append(

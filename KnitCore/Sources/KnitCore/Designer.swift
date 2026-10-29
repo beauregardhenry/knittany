@@ -26,7 +26,7 @@ public enum Designer {
             garment: c.garment,
             shape: c.construction == .raglan ? .raglan : .yoke,
             neckline: .round,
-            sizes: StandardSizing.sizes,
+            sizes: c.sizeChart.sizes,
             gauge: c.gauge,
             primaryDimension: .chest,
             statedEase: DesignSizing.statedEase(for: c),
@@ -37,6 +37,7 @@ public enum Designer {
         )
         var designed = pattern
         designed.design = c
+        designed.sizedFor = c.sizeChart
         try designed.validate()
         return designed
     }

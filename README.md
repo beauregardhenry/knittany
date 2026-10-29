@@ -70,7 +70,7 @@ a top-down raglan or round yoke, pullover or cardigan, crew or wide neck, fit
 (close to oversized), length, body shape, sleeve length and shape, edge
 finishes (2x2 or 1x1 rib, garter, rolled), stripes, and the swatch gauge.
 
-The design is drawn for the nine Craft Yarn Council sizes, XS–5X, using
+The design is drawn for the Craft Yarn Council's women's sizes (XS–5X) or men's sizes (S–5X), using
 their body measurements plus the ease of the chosen fit. Every stitch and row
 count is a formula over the finished measurements and the gauge, so the
 result is an ordinary pattern: a project regrades it to anyone's
@@ -133,7 +133,7 @@ the app (the one-time setup is at the top of the script).
 
 ## Using the app
 
-1. **People**: add the person and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates for reference; regrading uses only what you measured.
+1. **People**: add the person, choose the women's or men's size chart, and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates from that chart, for reference; regrading uses only what you measured.
 2. **Patterns**: **Import Pattern…** (⌘I) a PDF, or open a PDF with Knitting, and check the draft before saving. Pattern files (`.json`) import directly; attach the original PDF so its chart pages are included.
 3. **New Project** (on the pattern): pick the person and version. If the pattern doesn't state its ease, enter the ease you want under Ease. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
 

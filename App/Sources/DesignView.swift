@@ -35,7 +35,7 @@ struct DesignView: View {
             }
             Divider()
             HStack {
-                Text("Drawn for the standard sizes \(StandardSizing.sizes.first!)–\(StandardSizing.sizes.last!); a project regrades it to anyone's measurements.")
+                Text("Drawn for the \(session.choices.sizeChart.label.lowercased()) standard sizes \(session.choices.sizeChart.sizes.first!)–\(session.choices.sizeChart.sizes.last!); a project regrades it to anyone's measurements.")
                     .font(.caption).foregroundStyle(.secondary)
                 Spacer()
                 Button("Cancel", role: .cancel) { dismiss() }.keyboardShortcut(.cancelAction)
@@ -75,6 +75,10 @@ struct DesignView: View {
                     Text("Cardigan").tag(GarmentType.cardigan)
                 }
                 .pickerStyle(.segmented)
+                Picker("Sizes", selection: Binding(get: { session.choices.sizeChart }, set: { session.choices.chart = $0 })) {
+                    ForEach(SizeChart.allCases, id: \.self) { Text($0.label).tag($0) }
+                }
+                .pickerStyle(.segmented)
                 Picker("Neckline", selection: c.neck) {
                     Text("Crew").tag(DesignChoices.Neck.crew)
                     Text("Wide").tag(DesignChoices.Neck.wide)
@@ -83,7 +87,7 @@ struct DesignView: View {
             } header: {
                 Text("Sweater")
             } footer: {
-                Text("Both are knitted top-down in one piece, so there's no sewing. A raglan has four diagonal lines from the neck to the underarms; a round yoke grows in a circle, which suits colourwork and stripes.")
+                Text("Sizes follow the Craft Yarn Council's women's or men's chart. Both constructions are knitted top-down in one piece, so there's no sewing. A raglan has four diagonal lines from the neck to the underarms; a round yoke grows in a circle, which suits colourwork and stripes.")
                     .font(.caption).foregroundStyle(.secondary)
             }
 
@@ -167,7 +171,7 @@ struct DesignView: View {
         VStack(spacing: 0) {
             HStack {
                 Picker("Preview for", selection: $previewFor) {
-                    ForEach(Array(StandardSizing.sizes.enumerated()), id: \.offset) { i, name in
+                    ForEach(Array(session.choices.sizeChart.sizes.enumerated()), id: \.offset) { i, name in
                         Text("Size \(name)").tag(PreviewTarget.size(i))
                     }
                     if !model.people.isEmpty {
@@ -197,7 +201,8 @@ struct DesignView: View {
             var plan = FitPlan(targets: [], notes: [])
             var name: String?
             switch previewFor {
-            case .size(let i):
+            case .size(let wanted):
+                let i = min(wanted, pattern.sizes.count - 1)
                 let targets = Dictionary(uniqueKeysWithValues: pattern.schematic.map { ($0.dimension, $0.values[i]) })
                 result = try Grader(pattern: pattern).grade(GradeRequest(targets: targets))
             case .person(let id):

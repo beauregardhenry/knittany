@@ -8,20 +8,28 @@ public struct Person: Codable, Sendable, Identifiable, Equatable {
     public var measurements: [BodyMeasure: Double]
     public var units: UnitPreference
     public var notes: String
+    /// Which standard chart estimates their missing measurements; nil means women's.
+    public var chart: SizeChart?
 
-    public init(id: UUID = UUID(), name: String, measurements: [BodyMeasure: Double] = [:], units: UnitPreference = .cmFirst, notes: String = "") {
+    public init(
+        id: UUID = UUID(), name: String, measurements: [BodyMeasure: Double] = [:], units: UnitPreference = .cmFirst,
+        notes: String = "", chart: SizeChart? = nil
+    ) {
         self.id = id
         self.name = name
         self.measurements = measurements
         self.units = units
         self.notes = notes
+        self.chart = chart
     }
+
+    public var sizeChart: SizeChart { chart ?? .women }
 
     /// The Craft Yarn Council value for a measurement that wasn't taken,
     /// based on the chest. Nil if it was taken, or can't be estimated.
     public func estimate(_ measure: BodyMeasure) -> Double? {
         guard measurements[measure] == nil, let chest = measurements[.chest] else { return nil }
-        return StandardSizing.estimate(measure, chest: chest)
+        return sizeChart.estimate(measure, chest: chest)
     }
 }
 
@@ -71,7 +79,8 @@ public struct Project: Codable, Sendable, Identifiable, Equatable {
             body: person?.measurements ?? [:],
             easeOverrides: easeOverrides,
             finishedOverrides: finishedOverrides,
-            options: options
+            options: options,
+            chart: pattern.sizedFor ?? .women
         )
         let result = try Grader(pattern: pattern).grade(
             GradeRequest(targets: plan.gradeTargets, gauge: gauge, options: options, units: units)

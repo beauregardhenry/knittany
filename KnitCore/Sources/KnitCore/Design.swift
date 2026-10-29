@@ -54,12 +54,17 @@ public struct DesignChoices: Codable, Sendable, Equatable {
     public var stripes: Bool
     /// The knitter's swatch gauge in stockinette.
     public var gauge: Gauge
+    /// Which standard chart the sizes are drawn from; nil means women's.
+    public var chart: SizeChart?
+
+    public var sizeChart: SizeChart { chart ?? .women }
 
     public init(
         name: String = "", construction: Construction = .raglan, garment: GarmentType = .pullover, neck: Neck = .crew,
         fit: Fit = .classic, length: Length = .hip, bodyShape: BodyShape = .straight, sleeveLength: SleeveLength = .full,
         sleeveTaper: SleeveTaper = .tapered, hem: Finish = .rib2x2, cuff: Finish = .rib2x2, neckband: Finish = .rib2x2,
-        stripes: Bool = false, gauge: Gauge = Gauge(stitchesPer10cm: 20, rowsPer10cm: 28, stitchPattern: "stockinette stitch")
+        stripes: Bool = false, gauge: Gauge = Gauge(stitchesPer10cm: 20, rowsPer10cm: 28, stitchPattern: "stockinette stitch"),
+        chart: SizeChart? = nil
     ) {
         self.name = name
         self.construction = construction
@@ -75,6 +80,7 @@ public struct DesignChoices: Codable, Sendable, Equatable {
         self.neckband = neckband
         self.stripes = stripes
         self.gauge = gauge
+        self.chart = chart
     }
 
     public var defaultName: String {
@@ -118,12 +124,21 @@ public enum DesignSizing {
     /// A wrist for each size; the standard charts don't give one.
     static func wrist(upperArm: Double) -> Double { 13 + 0.15 * upperArm }
 
-    static func column(_ m: BodyMeasure) -> [Double] { StandardSizing.table[m] ?? [] }
+    static func column(_ m: BodyMeasure, _ chart: SizeChart) -> [Double] { chart.table[m] ?? [] }
+
+    /// Underarm to the hip bone for each size. The men's chart measures the back
+    /// to the hip; the women's to the waist, about 15 cm above the hip.
+    static func underarmToHip(_ chart: SizeChart) -> [Double] {
+        let armhole = column(.armholeDepth, chart)
+        if let hip = chart.backHipLength { return zip(hip, armhole).map { $0 - $1 } }
+        return zip(column(.backWaistLength, chart), armhole).map { $0 - $1 + 15 }
+    }
 
     public static func rows(for c: DesignChoices) -> [Row] {
         let e = ease(c.fit)
-        let chest = column(.chest), arm = column(.upperArm), armhole = column(.armholeDepth)
-        let backWaist = column(.backWaistLength), armLength = column(.armLength), hip = column(.hip)
+        let chart = c.sizeChart
+        let chest = column(.chest, chart), arm = column(.upperArm, chart), armhole = column(.armholeDepth, chart)
+        let toHip = underarmToHip(chart), armLength = column(.armLength, chart), hip = column(.hip, chart)
         let n = chest.count
         func each(_ f: (Int) -> Double) -> [Double] { (0..<n).map { ((f($0)) * 4).rounded() / 4 } }
 
@@ -137,9 +152,9 @@ public enum DesignSizing {
         case .short: 0
         }
         let lengthAdd: Double = switch c.length {
-        case .cropped: -2
-        case .hip: 15
-        case .tunic: 30
+        case .cropped: -17
+        case .hip: 0
+        case .tunic: 15
         }
 
         var rows = [
@@ -147,7 +162,7 @@ public enum DesignSizing {
             Row(id: "b", label: "Upper arm", dimension: .upperArm, values: finishedArm),
             Row(id: "c", label: "Yoke depth", dimension: .yokeDepth, values: each { armhole[$0] + e.depth }),
             Row(id: "d", label: "Body length from underarm", dimension: .bodyLength,
-                values: each { backWaist[$0] - armhole[$0] + lengthAdd }),
+                values: each { toHip[$0] + lengthAdd }),
             Row(id: "e", label: "Sleeve length from underarm", dimension: .sleeveLength,
                 values: each { c.sleeveLength == .short ? 8 : max(cuffDepth + 6, armLength[$0] * sleeveFactor) }),
         ]
@@ -177,17 +192,18 @@ public enum DesignSizing {
     /// Ease the design is drawn with, so a person's own measurements regrade it.
     public static func statedEase(for c: DesignChoices) -> [GarmentMeasure: Double] {
         let e = ease(c.fit)
-        let mid = 4
+        let chart = c.sizeChart
+        let mid = chart.sizes.count / 2
         let rows = rows(for: c)
         func value(_ d: GarmentMeasure) -> Double { rows.first { $0.dimension == d }!.values[mid] }
-        let arm = column(.upperArm)[mid]
+        let arm = column(.upperArm, chart)[mid]
         return [
             .chest: e.chest,
             .upperArm: e.arm,
             .yokeDepth: e.depth,
-            .hem: value(.hem) - column(.hip)[mid],
+            .hem: value(.hem) - column(.hip, chart)[mid],
             .cuff: value(.cuff) - wrist(upperArm: arm),
-            .sleeveLength: value(.sleeveLength) - column(.armLength)[mid],
+            .sleeveLength: value(.sleeveLength) - column(.armLength, chart)[mid],
             .neckOpening: c.neck == .wide ? 20 : 6,
         ]
     }

@@ -21,6 +21,10 @@ struct PersonView: View {
                     Text("Inches").tag(UnitPreference.inchFirst)
                 }
                 .pickerStyle(.segmented)
+                Picker("Estimate from", selection: Binding(get: { person.sizeChart }, set: { person.chart = $0 })) {
+                    ForEach(SizeChart.allCases, id: \.self) { Text("\($0.label) size chart").tag($0) }
+                }
+                .pickerStyle(.segmented)
             }
 
             Section {
@@ -32,7 +36,7 @@ struct PersonView: View {
             } footer: {
                 Text(
                     "Measure the body, not a garment. Leave out anything you haven't measured: grey values are estimates "
-                        + "from the Craft Yarn Council standard charts, based on the chest. Regrading uses only what you measure; "
+                        + "from the Craft Yarn Council's \(person.sizeChart.label.lowercased()) size chart, based on the chest. Regrading uses only what you measure; "
                         + "anything else follows the designer's grading. Height is kept for reference only, because it "
                         + "doesn't reliably predict body or arm lengths."
                 )

@@ -118,6 +118,7 @@ final class LibraryModel {
     func newDesign() {
         var choices = DesignChoices()
         if let g = index.projects.first?.gauge { choices.gauge = g }
+        if case .person(let id)? = selection, let p = person(id) { choices.chart = p.chart }
         designing = DesignSession(choices: choices)
     }
 

@@ -27,6 +27,8 @@ public struct Pattern: Codable, Sendable {
     public var sourcePages: [SourcePage]?
     /// For a pattern designed in the app: the choices it was made from, so it can be edited.
     public var design: DesignChoices?
+    /// The standard chart the sizes follow, for inferring ease; nil means women's.
+    public var sizedFor: SizeChart?
 
     public static func load(from url: URL) throws -> Pattern {
         let pattern = try JSONDecoder().decode(Pattern.self, from: Data(contentsOf: url))

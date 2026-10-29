@@ -18,7 +18,8 @@ struct DesignTests {
                         out.append(DesignChoices(
                             construction: construction, garment: garment, neck: fit == .relaxed ? .wide : .crew, fit: fit,
                             length: fit == .close ? .cropped : .hip, bodyShape: shape, sleeveLength: sleeves,
-                            hem: finish, cuff: finish, neckband: finish, stripes: fit == .oversized
+                            hem: finish, cuff: finish, neckband: finish, stripes: fit == .oversized,
+                            chart: shape == .aLine || finish == .garter ? .men : .women
                         ))
                     }
                 }
@@ -66,6 +67,26 @@ struct DesignTests {
         #expect(chest.finished == 99 + 18)
         let arm = try #require(plan.targets.first { $0.dimension == .upperArm })
         #expect(arm.finished == 31 + 8)
+    }
+
+    @Test func mensSizesComeFromTheMensChart() throws {
+        let pattern = try Designer.pattern(from: DesignChoices(fit: .classic, length: .hip, chart: .men))
+        #expect(pattern.sizes == ["S", "M", "L", "XL", "2X", "3X", "4X", "5X"])
+        #expect(pattern.sizedFor == .men)
+        let chest = pattern.schematic.first { $0.dimension == .chest }!.values
+        #expect(chest[1] == 99 + 10, "men's M is a 39 in chest plus classic ease")
+        // Underarm to hip: the men's chart's back-hip length less the armhole depth.
+        let length = pattern.schematic.first { $0.dimension == .bodyLength }!.values
+        #expect(length[1] == 64.75 - 23.5)
+    }
+
+    @Test func estimatesFollowThePersonsChart() {
+        let him = Person(name: "B", measurements: [.chest: 122], chart: .men)
+        let her = Person(name: "W", measurements: [.chest: 122])
+        #expect(him.estimate(.upperArm)! > her.estimate(.upperArm)! - 1)
+        #expect(him.estimate(.armholeDepth)! > her.estimate(.armholeDepth)!)
+        #expect(him.estimate(.backWaistLength) == nil, "the men's chart has no waist length")
+        #expect(SizeChart.men.estimate(.armLength, chest: 119.5) == 50.75)
     }
 
     @Test func choicesRoundTrip() throws {
