@@ -1,5 +1,5 @@
-# Generate Knitting.xcodeproj with: xcodegen generate (run in this folder)
-name: Knitting
+# Generate Knittany.xcodeproj with: xcodegen generate (run in this folder)
+name: Knittany
 options:
   bundleIdPrefix: com.beauregardhenry
   deploymentTarget:
@@ -9,14 +9,14 @@ packages:
   KnitCore:
     path: ../KnitCore
 targets:
-  Knitting:
+  Knittany:
     type: application
     platform: macOS
     sources: [Sources]
     info:
       path: Info.plist
       properties:
-        # Open a pattern PDF with Knitting (or drop it on the Dock icon) to import it.
+        # Open a pattern PDF with Knittany (or drop it on the Dock icon) to import it.
         CFBundleDocumentTypes:
           - CFBundleTypeName: PDF pattern
             CFBundleTypeRole: Viewer
@@ -31,12 +31,12 @@ targets:
         product: KnitImport
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.beauregardhenry.knitting
-        PRODUCT_NAME: Knitting
+        PRODUCT_BUNDLE_IDENTIFIER: com.beauregardhenry.knittany
+        PRODUCT_NAME: Knittany
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Knitting
+        INFOPLIST_KEY_CFBundleDisplayName: Knittany
         # Drawn by Icon/make_icon.swift.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.lifestyle

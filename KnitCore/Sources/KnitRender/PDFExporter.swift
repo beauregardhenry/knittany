@@ -32,7 +32,7 @@ public enum PDFExporter {
         guard let consumer = CGDataConsumer(data: data as CFMutableData),
               let ctx = CGContext(consumer: consumer, mediaBox: &mediaBox, [
                   kCGPDFContextTitle: "\(result.pattern.name) — regraded" as CFString,
-                  kCGPDFContextCreator: "Knitting" as CFString,
+                  kCGPDFContextCreator: "Knittany" as CFString,
               ] as CFDictionary)
         else { throw PatternError("couldn't create the PDF") }
 

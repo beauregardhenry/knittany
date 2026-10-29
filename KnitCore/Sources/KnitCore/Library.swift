@@ -127,9 +127,20 @@ public struct LibraryStore: Sendable {
         self.root = root
     }
 
+    /// `~/Library/Application Support/Knittany`. A library from before the app
+    /// was renamed (in a `Knitting` folder) is moved here the first time.
     public static var defaultRoot: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("Knitting", isDirectory: true)
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let root = support.appendingPathComponent("Knittany", isDirectory: true)
+        moveLibrary(from: support.appendingPathComponent("Knitting", isDirectory: true), to: root)
+        return root
+    }
+
+    /// Moves an old library folder to a new one, if there's an old one and no new one yet.
+    static func moveLibrary(from old: URL, to new: URL) {
+        let fm = FileManager.default
+        guard !fm.fileExists(atPath: new.path), fm.fileExists(atPath: old.appendingPathComponent("library.json").path) else { return }
+        try? fm.moveItem(at: old, to: new)
     }
 
     var indexURL: URL { root.appendingPathComponent("library.json") }

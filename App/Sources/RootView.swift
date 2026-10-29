@@ -81,7 +81,7 @@ struct WelcomeView: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 96, height: 96)
-            Text("Knitting").font(.title)
+            Text("Knittany").font(.title)
             Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF and check what was read, or design a sweater from scratch.\n3. Open the pattern and choose New Project.")
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(.secondary)

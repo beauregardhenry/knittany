@@ -1,4 +1,4 @@
-# Knitting
+# Knittany
 
 A Mac app (Intel and Apple Silicon, macOS 15 Sequoia or later) that regrades
 knitting patterns to the wearer's measurements: between or beyond the
@@ -9,7 +9,7 @@ published sizes, or with specific changes such as a longer body or wider hips.
 | Folder | What it is |
 |---|---|
 | `KnitCore/` | Swift package: `KnitCore` (the knitting maths and the library of people, patterns and projects), `KnitRender` (schematic and chart drawing, PDF export), `KnitImport` (reading pattern PDFs), the `knit` command-line tool, and the tests |
-| `App/` | The Mac app (SwiftUI). `project.yml` generates `Knitting.xcodeproj` with [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
+| `App/` | The Mac app (SwiftUI). `project.yml` generates `Knittany.xcodeproj` with [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | `Patterns/` | Encoded patterns. **Not in git** (see below) |
 
 ## How regrading works
@@ -124,7 +124,7 @@ cd KnitCore && swift run knit read ../Patterns/dipped-arms.pdf --pattern /tmp/di
 ```
 
 ```bash
-cd App && xcodegen generate && xcodebuild -project Knitting.xcodeproj -scheme Knitting -configuration Release -destination 'generic/platform=macOS' -derivedDataPath ../build/DerivedData build
+cd App && xcodegen generate && xcodebuild -project Knittany.xcodeproj -scheme Knittany -configuration Release -destination 'generic/platform=macOS' -derivedDataPath ../build/DerivedData build
 ```
 
 The app is ad-hoc signed for now. Once the Apple Developer account is set up,
@@ -134,12 +134,12 @@ the app (the one-time setup is at the top of the script).
 ## Using the app
 
 1. **People**: add the person, choose the women's or men's size chart, and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates from that chart, for reference; regrading uses only what you measured.
-2. **Patterns**: **Import Pattern…** (⌘I) a PDF, or open a PDF with Knitting, and check the draft before saving. Pattern files (`.json`) import directly; attach the original PDF so its chart pages are included.
+2. **Patterns**: **Import Pattern…** (⌘I) a PDF, or open a PDF with Knittany, and check the draft before saving. Pattern files (`.json`) import directly; attach the original PDF so its chart pages are included.
 3. **New Project** (on the pattern): pick the person and version. If the pattern doesn't state its ease, enter the ease you want under Ease. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
 
 4. **Knit**: switch the project to Knit for a checklist of every step, with the next step highlighted and a row counter (`-` and `=` keys). Progress is saved with the project.
 
-Everything is kept as plain files in `~/Library/Application Support/Knitting/` (backed up by Time Machine). Deleted patterns go to the Trash.
+Everything is kept as plain files in `~/Library/Application Support/Knittany/` (backed up by Time Machine). Deleted patterns go to the Trash.
 
 ## Pattern files and this public repo
 

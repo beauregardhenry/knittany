@@ -24,9 +24,9 @@ final class LibraryModel {
     var designing: DesignSession?
     private var patternCache: [UUID: KnitCore.Pattern] = [:]
 
-    /// `KNITTING_LIBRARY` points the app at another folder, for testing.
+    /// `KNITTANY_LIBRARY` points the app at another folder, for testing.
     static var defaultStore: LibraryStore {
-        let path = ProcessInfo.processInfo.environment["KNITTING_LIBRARY"]
+        let path = ProcessInfo.processInfo.environment["KNITTANY_LIBRARY"]
         return LibraryStore(root: path.map { URL(fileURLWithPath: $0, isDirectory: true) } ?? LibraryStore.defaultRoot)
     }
 

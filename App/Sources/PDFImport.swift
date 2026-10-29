@@ -25,7 +25,7 @@ final class PDFImport: Identifiable {
     init(copying url: URL) throws {
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
-        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("Knitting-import-\(UUID().uuidString)", isDirectory: true)
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("Knittany-import-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         pdf = folder.appendingPathComponent(url.lastPathComponent)
         try FileManager.default.copyItem(at: url, to: pdf)

@@ -1,0 +1,423 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		126FE94CC8D257498A559B7D /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A862BE2348B476A577EE99C2 /* Keychain.swift */; };
+		2BB10C9DE911B622329D9C9F /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6D0FFF0EDAF2B5E809C016 /* Fields.swift */; };
+		2CF7BEB8A6D6E842105BA8F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80637F163EB7F2CC4245A741 /* Assets.xcassets */; };
+		2D0E4E04CB9B1135012310AE /* ImportReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8869F8C072E97ED1F343DFA /* ImportReviewView.swift */; };
+		39D93BE893A36284910DD585 /* KnitCore in Frameworks */ = {isa = PBXBuildFile; productRef = 29492472C08F459C8D6E48B4 /* KnitCore */; };
+		582FBAD070162DDE1AACB395 /* PatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA09324A3B84EF663D1D1C99 /* PatternView.swift */; };
+		5C0F02AC50F1962EDCB8DC8C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12A13B09897DF6855D54047 /* RootView.swift */; };
+		6A933C3BB447293182B462AD /* LibraryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F571E39346D8C1BBCFBC903B /* LibraryModel.swift */; };
+		6C9EE5F63825FB5B44590A8F /* KnitImport in Frameworks */ = {isa = PBXBuildFile; productRef = 858C4190EAEEAF687EC8179C /* KnitImport */; };
+		AA56D041B202375F52806BC1 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76904FB20AC8D5A93255CAD4 /* ProjectView.swift */; };
+		BD80E7448E90B9E8EABBCDE5 /* KnitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9016B8410616B67EAC30FD5D /* KnitView.swift */; };
+		C6FFD5D9C7DA9AA35671C24D /* KnittanyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D3FB95CF04A6C616027A6 /* KnittanyApp.swift */; };
+		CEBAFF0C1A7C3B6CE0F2FB93 /* DesignView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BB25B981F08A75B5B88A46 /* DesignView.swift */; };
+		E5FDB4B15A30EB6ADFE918BE /* PDFImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D238A8D2339E4ED98A2092 /* PDFImport.swift */; };
+		E764A09BFA2D49224F163C05 /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F40B9A04C4FD56D2400CB0 /* PersonView.swift */; };
+		FB7CBBA50CF8BD94B80F28B2 /* KnitRender in Frameworks */ = {isa = PBXBuildFile; productRef = 45ACCE774C1E696B16BF6167 /* KnitRender */; };
+		FBA13A9F56D3CF23EDBBCA86 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D086A4348951C5C964A074 /* SettingsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01BB25B981F08A75B5B88A46 /* DesignView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignView.swift; sourceTree = "<group>"; };
+		44D238A8D2339E4ED98A2092 /* PDFImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFImport.swift; sourceTree = "<group>"; };
+		510D3FB95CF04A6C616027A6 /* KnittanyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnittanyApp.swift; sourceTree = "<group>"; };
+		61ED9AD31B894CA81D1B7601 /* KnitCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KnitCore; path = ../KnitCore; sourceTree = SOURCE_ROOT; };
+		76904FB20AC8D5A93255CAD4 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
+		80637F163EB7F2CC4245A741 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		88D086A4348951C5C964A074 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9016B8410616B67EAC30FD5D /* KnitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnitView.swift; sourceTree = "<group>"; };
+		96F40B9A04C4FD56D2400CB0 /* PersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonView.swift; sourceTree = "<group>"; };
+		9B6D0FFF0EDAF2B5E809C016 /* Fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fields.swift; sourceTree = "<group>"; };
+		A862BE2348B476A577EE99C2 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		AA09324A3B84EF663D1D1C99 /* PatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternView.swift; sourceTree = "<group>"; };
+		CA60A4C1F0F827D3EB5E7D97 /* Knittany.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Knittany.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D12A13B09897DF6855D54047 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F571E39346D8C1BBCFBC903B /* LibraryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryModel.swift; sourceTree = "<group>"; };
+		F8869F8C072E97ED1F343DFA /* ImportReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportReviewView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BEA41F125F2D7A925FBE0E83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39D93BE893A36284910DD585 /* KnitCore in Frameworks */,
+				FB7CBBA50CF8BD94B80F28B2 /* KnitRender in Frameworks */,
+				6C9EE5F63825FB5B44590A8F /* KnitImport in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04E1BB83E0C28F110F06E85E /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				80637F163EB7F2CC4245A741 /* Assets.xcassets */,
+				01BB25B981F08A75B5B88A46 /* DesignView.swift */,
+				9B6D0FFF0EDAF2B5E809C016 /* Fields.swift */,
+				F8869F8C072E97ED1F343DFA /* ImportReviewView.swift */,
+				A862BE2348B476A577EE99C2 /* Keychain.swift */,
+				510D3FB95CF04A6C616027A6 /* KnittanyApp.swift */,
+				9016B8410616B67EAC30FD5D /* KnitView.swift */,
+				F571E39346D8C1BBCFBC903B /* LibraryModel.swift */,
+				AA09324A3B84EF663D1D1C99 /* PatternView.swift */,
+				44D238A8D2339E4ED98A2092 /* PDFImport.swift */,
+				96F40B9A04C4FD56D2400CB0 /* PersonView.swift */,
+				76904FB20AC8D5A93255CAD4 /* ProjectView.swift */,
+				D12A13B09897DF6855D54047 /* RootView.swift */,
+				88D086A4348951C5C964A074 /* SettingsView.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		51589A449341078C956F1B91 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA60A4C1F0F827D3EB5E7D97 /* Knittany.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8A98C9E7CCC6006045288AD0 = {
+			isa = PBXGroup;
+			children = (
+				9D80BECC52E41CCAFAD211EE /* Packages */,
+				04E1BB83E0C28F110F06E85E /* Sources */,
+				51589A449341078C956F1B91 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9D80BECC52E41CCAFAD211EE /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				61ED9AD31B894CA81D1B7601 /* KnitCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		88CEB12279FC9BF39FC6436A /* Knittany */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 722F8BD03E90155132228F80 /* Build configuration list for PBXNativeTarget "Knittany" */;
+			buildPhases = (
+				D5F44672FBB1F87ED6866B31 /* Sources */,
+				EBCD448D4FDCF59EDF203E01 /* Resources */,
+				BEA41F125F2D7A925FBE0E83 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Knittany;
+			packageProductDependencies = (
+				29492472C08F459C8D6E48B4 /* KnitCore */,
+				45ACCE774C1E696B16BF6167 /* KnitRender */,
+				858C4190EAEEAF687EC8179C /* KnitImport */,
+			);
+			productName = Knittany;
+			productReference = CA60A4C1F0F827D3EB5E7D97 /* Knittany.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		400353B7162EBA95FD19C65F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					88CEB12279FC9BF39FC6436A = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = E1FF960104D562A0443C7664 /* Build configuration list for PBXProject "Knittany" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8A98C9E7CCC6006045288AD0;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4F4407C845E2B686B5BAD714 /* XCLocalSwiftPackageReference "../KnitCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 51589A449341078C956F1B91 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				88CEB12279FC9BF39FC6436A /* Knittany */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EBCD448D4FDCF59EDF203E01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2CF7BEB8A6D6E842105BA8F8 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D5F44672FBB1F87ED6866B31 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBAFF0C1A7C3B6CE0F2FB93 /* DesignView.swift in Sources */,
+				2BB10C9DE911B622329D9C9F /* Fields.swift in Sources */,
+				2D0E4E04CB9B1135012310AE /* ImportReviewView.swift in Sources */,
+				126FE94CC8D257498A559B7D /* Keychain.swift in Sources */,
+				BD80E7448E90B9E8EABBCDE5 /* KnitView.swift in Sources */,
+				C6FFD5D9C7DA9AA35671C24D /* KnittanyApp.swift in Sources */,
+				6A933C3BB447293182B462AD /* LibraryModel.swift in Sources */,
+				E5FDB4B15A30EB6ADFE918BE /* PDFImport.swift in Sources */,
+				582FBAD070162DDE1AACB395 /* PatternView.swift in Sources */,
+				E764A09BFA2D49224F163C05 /* PersonView.swift in Sources */,
+				AA56D041B202375F52806BC1 /* ProjectView.swift in Sources */,
+				5C0F02AC50F1962EDCB8DC8C /* RootView.swift in Sources */,
+				FBA13A9F56D3CF23EDBBCA86 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		35C0D9F482F9E9D925D5F794 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		406C1CA7F4D90415913A4BCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Knittany;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beauregardhenry.knittany;
+				PRODUCT_NAME = Knittany;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		728B477D3140F92D147C0648 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Knittany;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beauregardhenry.knittany;
+				PRODUCT_NAME = Knittany;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A273832E816A2B9695096E65 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		722F8BD03E90155132228F80 /* Build configuration list for PBXNativeTarget "Knittany" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				728B477D3140F92D147C0648 /* Debug */,
+				406C1CA7F4D90415913A4BCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E1FF960104D562A0443C7664 /* Build configuration list for PBXProject "Knittany" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35C0D9F482F9E9D925D5F794 /* Debug */,
+				A273832E816A2B9695096E65 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4F4407C845E2B686B5BAD714 /* XCLocalSwiftPackageReference "../KnitCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../KnitCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		29492472C08F459C8D6E48B4 /* KnitCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KnitCore;
+		};
+		45ACCE774C1E696B16BF6167 /* KnitRender */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KnitRender;
+		};
+		858C4190EAEEAF687EC8179C /* KnitImport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KnitImport;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 400353B7162EBA95FD19C65F /* Project object */;
+}

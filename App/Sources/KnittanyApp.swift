@@ -1,11 +1,11 @@
 import SwiftUI
 
 @main
-struct KnittingApp: App {
+struct KnittanyApp: App {
     @State private var model = LibraryModel()
 
     var body: some Scene {
-        WindowGroup("Knitting") {
+        WindowGroup("Knittany") {
             RootView()
                 .environment(model)
                 .frame(minWidth: 1000, minHeight: 640)

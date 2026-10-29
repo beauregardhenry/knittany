@@ -152,3 +152,22 @@ struct ShapeAndProgressTests {
         #expect(legacy.progress == nil)
     }
 }
+
+@Suite("Renamed library folder")
+struct LibraryMoveTests {
+    @Test func movesAnOldLibraryOnce() throws {
+        let fm = FileManager.default
+        let base = fm.temporaryDirectory.appendingPathComponent("move-\(UUID().uuidString)")
+        let old = base.appendingPathComponent("Knitting"), new = base.appendingPathComponent("Knittany")
+        try fm.createDirectory(at: old, withIntermediateDirectories: true)
+        try Data("{}".utf8).write(to: old.appendingPathComponent("library.json"))
+        LibraryStore.moveLibrary(from: old, to: new)
+        #expect(fm.fileExists(atPath: new.appendingPathComponent("library.json").path))
+        #expect(!fm.fileExists(atPath: old.path))
+        // A newer library is never overwritten by an old one.
+        try fm.createDirectory(at: old, withIntermediateDirectories: true)
+        try Data("old".utf8).write(to: old.appendingPathComponent("library.json"))
+        LibraryStore.moveLibrary(from: old, to: new)
+        #expect(try String(contentsOf: new.appendingPathComponent("library.json"), encoding: .utf8) == "{}")
+    }
+}

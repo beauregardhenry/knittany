@@ -3,6 +3,7 @@ import Security
 
 /// The Anthropic API key for reading PDFs with Claude, kept in the login keychain.
 enum APIKeyStore {
+    // Kept from before the app was called Knittany, so a saved key carries over.
     static let service = "com.beauregardhenry.knitting.anthropic"
     static let account = "api-key"
 
