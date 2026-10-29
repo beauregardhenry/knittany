@@ -30,6 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Run tests on native hardware
+        timeout-minutes: 15
         working-directory: KnitCore
         run: swift test --disable-sandbox
       - name: Build the native release command-line tool

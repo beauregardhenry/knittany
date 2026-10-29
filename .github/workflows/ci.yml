@@ -30,6 +30,7 @@ jobs:
       - name: Check the test count ratchet
         run: ./scripts/check-test-count.sh
       - name: Run the tests and check the coverage ratchet
+        timeout-minutes: 15
         run: ./scripts/check-coverage.sh
       - name: Verify the checked-in Xcode project matches the sources
         run: ./scripts/verify-xcode-project.sh
@@ -45,5 +46,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Run the tests on Intel hardware
+        timeout-minutes: 15
         working-directory: KnitCore
         run: swift test --disable-sandbox

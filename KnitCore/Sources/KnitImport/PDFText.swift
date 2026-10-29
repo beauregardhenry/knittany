@@ -39,14 +39,15 @@ public enum PDFTextReader {
         var bold = false
     }
 
-    public static func read(_ url: URL) throws -> [PageText] {
+    /// With `ocr` off, pages without a text layer are left empty instead of being recognised.
+    public static func read(_ url: URL, ocr allowOCR: Bool = true) throws -> [PageText] {
         guard let doc = PDFDocument(url: url) else { throw PatternError("Couldn't open \(url.lastPathComponent) as a PDF.") }
         var pages: [PageText] = []
         for i in 0..<doc.pageCount {
             guard let page = doc.page(at: i) else { continue }
             var lines = textLines(page)
             var ocr = false
-            if lines.map(\.text.count).reduce(0, +) < 40, let recognised = try? ocrLines(page), !recognised.isEmpty {
+            if allowOCR, lines.map(\.text.count).reduce(0, +) < 40, let recognised = try? ocrLines(page), !recognised.isEmpty {
                 lines = recognised
                 ocr = true
             }
