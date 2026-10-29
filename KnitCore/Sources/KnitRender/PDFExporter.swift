@@ -143,15 +143,21 @@ public enum PDFExporter {
         }
 
         s.append(heading("Finished measurements"))
-        let tabs = paragraph(after: 3, tabs: [24, 250, 360])
-        s.append(line("\t\tThis version\tDesigner's grading", font: bold, style: tabs))
+        // One measurement per entry, label first, so long labels never run into the numbers.
         for m in r.schematic {
-            var row = "\(m.entry.id)\t\(m.entry.label)\t\(f.length(m.target))"
-            row += abs(m.target - m.base) > 0.01 ? "\t\(f.length(m.base))" : "\t–"
-            s.append(line(row, style: tabs))
-            if let a = m.achieved, abs(a - m.target) >= 0.5 {
-                s.append(line("\t\tthe stitch counts give \(f.length(a))", color: .darkGray, style: tabs))
+            s.append(line("\(m.entry.id)\t\(m.entry.label)", font: bold, style: paragraph(after: 1, indent: 18, tabs: [18])))
+            var details: [String] = []
+            if abs(m.target - m.base) > 0.01 { details.append("designer's grading \(f.length(m.base))") }
+            if let a = m.achieved, abs(a - m.target) >= 0.5 { details.append("the stitch counts give \(f.length(a))") }
+            let value = NSMutableAttributedString(attributedString: line("\t\(f.length(m.target))", style: paragraph(after: 5, indent: 18, tabs: [18])))
+            if !details.isEmpty {
+                value.deleteCharacters(in: NSRange(location: value.length - 1, length: 1))
+                value.append(NSAttributedString(string: "   (" + details.joined(separator: "; ") + ")\n", attributes: [
+                    .font: Ink.font(10), .foregroundColor: NSColor.darkGray,
+                    .paragraphStyle: paragraph(after: 5, indent: 18, tabs: [18]),
+                ]))
             }
+            s.append(value)
         }
 
         if !r.warnings.isEmpty {

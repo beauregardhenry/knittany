@@ -153,9 +153,10 @@ final class LibraryModel {
     func project(_ id: UUID) -> Project? { index.projects.first { $0.id == id } }
 
     func addProject(patternID: UUID, personID: UUID? = nil) {
-        let name = [person(personID)?.name, entry(patternID)?.name].compactMap { $0 }.joined(separator: "'s ")
-        let units = person(personID)?.units ?? .cmFirst
-        let p = Project(name: name.isEmpty ? "New project" : name, patternID: patternID, personID: personID ?? index.people.first?.id, units: units)
+        let knitter = person(personID ?? index.people.first?.id)
+        let name = [knitter?.name, entry(patternID)?.name].compactMap { $0 }.joined(separator: "'s ")
+        let units = knitter?.units ?? (Locale.current.measurementSystem == .us ? .inchFirst : .cmFirst)
+        let p = Project(name: name.isEmpty ? "New project" : name, patternID: patternID, personID: knitter?.id, units: units)
         index.projects.append(p)
         save()
         selection = .project(p.id)

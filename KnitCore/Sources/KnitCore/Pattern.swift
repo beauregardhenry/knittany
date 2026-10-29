@@ -9,6 +9,9 @@ public struct Pattern: Codable, Sendable {
     public var source: String?
     public var construction: String?
     public var garment: GarmentType?
+    /// How the sleeves join the body; used to draw the schematic.
+    public var shape: SleeveShape?
+    public var neckline: Neckline?
     public var sizes: [String]
     public var gauge: Gauge
     /// The measurement that picks the size (almost always chest).
@@ -72,7 +75,7 @@ public struct Pattern: Codable, Sendable {
 
     public init(
         name: String, designer: String? = nil, source: String? = nil, construction: String? = nil,
-        garment: GarmentType? = nil, sizes: [String], gauge: Gauge, primaryDimension: GarmentMeasure = .chest,
+        garment: GarmentType? = nil, shape: SleeveShape? = nil, neckline: Neckline? = nil, sizes: [String], gauge: Gauge, primaryDimension: GarmentMeasure = .chest,
         statedEase: [GarmentMeasure: Double]? = nil, options: [PatternOption]? = nil, schematic: [SchematicEntry],
         quantities: [Quantity], checks: [PatternCheck]? = nil, sections: [Section], charts: [Chart]? = nil,
         sourcePages: [SourcePage]? = nil
@@ -82,6 +85,8 @@ public struct Pattern: Codable, Sendable {
         self.source = source
         self.construction = construction
         self.garment = garment
+        self.shape = shape
+        self.neckline = neckline
         self.sizes = sizes
         self.gauge = gauge
         self.primaryDimension = primaryDimension
@@ -99,6 +104,20 @@ public struct Pattern: Codable, Sendable {
 public enum GarmentType: String, Codable, Sendable {
     case pullover
     case cardigan
+}
+
+public enum SleeveShape: String, Codable, Sendable {
+    /// Sleeves sewn or picked up into an armhole, with a shoulder line.
+    case setIn
+    /// Sleeves joined to the body along diagonal lines from the neck to the underarm.
+    case raglan
+    /// A round yoke worked all in one, the sleeves separated at the underarm.
+    case yoke
+}
+
+public enum Neckline: String, Codable, Sendable {
+    case round
+    case v
 }
 
 public struct PatternError: Error, CustomStringConvertible {

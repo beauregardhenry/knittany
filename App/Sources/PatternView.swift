@@ -8,6 +8,7 @@ struct PatternView: View {
     let entry: PatternEntry
     @State private var attachingPDF = false
     @State private var confirmingDelete = false
+    private let inches = Locale.current.measurementSystem == .us
 
     var body: some View {
         if let pattern = model.pattern(entry.id) {
@@ -56,13 +57,13 @@ struct PatternView: View {
                             GridRow {
                                 Text("\(s.id.prefix(1))  \(s.label)").gridColumnAlignment(.leading)
                                 ForEach(Array(s.values.enumerated()), id: \.offset) { _, v in
-                                    Text(MeasureFormatter.trim(v)).monospacedDigit()
+                                    Text(MeasureFormatter.trim(inches ? (v / 2.54 * 4).rounded() / 4 : v)).monospacedDigit()
                                 }
                             }
                         }
                     }
                     .font(.callout)
-                    Text("cm").font(.caption).foregroundStyle(.secondary)
+                    Text(inches ? "inches" : "cm").font(.caption).foregroundStyle(.secondary)
                 }
 
                 Section {

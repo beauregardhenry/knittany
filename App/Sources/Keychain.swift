@@ -6,6 +6,19 @@ enum APIKeyStore {
     static let service = "com.beauregardhenry.knitting.anthropic"
     static let account = "api-key"
 
+    /// Whether a key is saved. Reads only the item's attributes, which never
+    /// prompts; reading the key itself can ask the user for keychain access.
+    static var hasKey: Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnAttributes as String: true,
+        ]
+        return SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
+    }
+
+    /// The key itself. Call only when it's about to be used.
     static var key: String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

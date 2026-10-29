@@ -12,6 +12,8 @@ public struct SchematicDrawing {
     let labels: [GarmentMeasure: Label]
     let size: [GarmentMeasure: Double]
     let garment: GarmentType
+    let shape: SleeveShape
+    let neckline: Neckline
 
     public init(result: GradeResult) {
         var labels: [GarmentMeasure: Label] = [:]
@@ -23,6 +25,8 @@ public struct SchematicDrawing {
         self.labels = labels
         self.size = size
         self.garment = result.pattern.garment ?? .pullover
+        self.shape = result.pattern.shape ?? .setIn
+        self.neckline = result.pattern.neckline ?? .round
     }
 
     struct Geometry {
@@ -31,6 +35,8 @@ public struct SchematicDrawing {
         var rightSleeve: [CGPoint]
         var neck: [CGPoint]
         var centreFront: (CGPoint, CGPoint)?
+        /// Construction lines drawn over the outline: the edge of a round yoke and its ribs.
+        var details: [[CGPoint]]
         var annotations: [Annotation]
         var bounds: CGRect
     }
@@ -69,10 +75,12 @@ public struct SchematicDrawing {
         let hemL = CGPoint(x: -h / 2, y: yoke + length)
         func mirror(_ p: CGPoint) -> CGPoint { CGPoint(x: -p.x, y: p.y) }
 
-        let body = [
-            CGPoint(x: -neckHalf, y: 0), shoulderL, underarmL, hemL,
-            mirror(hemL), mirror(underarmL), mirror(shoulderL), CGPoint(x: neckHalf, y: 0),
-        ]
+        let neckL = CGPoint(x: -neckHalf, y: 0)
+        // Raglans and yokes have no shoulder line: the sleeve runs up to the neck.
+        let seamless = shape != .setIn
+        let body = seamless
+            ? [neckL, underarmL, hemL, mirror(hemL), mirror(underarmL), mirror(neckL)]
+            : [neckL, shoulderL, underarmL, hemL, mirror(hemL), mirror(underarmL), mirror(shoulderL), mirror(neckL)]
 
         // Sleeve: hangs from the armhole at the angle that gives its upper-arm width.
         let armhole = underarmL.y - shoulderL.y
@@ -86,15 +94,39 @@ public struct SchematicDrawing {
         let endA = CGPoint(x: end.x + normal.x * cuff / 2, y: end.y + normal.y * cuff / 2)
         let endB = CGPoint(x: end.x - normal.x * cuff / 2, y: end.y - normal.y * cuff / 2)
         let (cuffTop, cuffBottom) = endA.y < endB.y ? (endA, endB) : (endB, endA)
-        let leftSleeve = [shoulderL, cuffTop, cuffBottom, underarmL]
+        let leftSleeve = [seamless ? neckL : shoulderL, cuffTop, cuffBottom, underarmL]
         let rightSleeve = leftSleeve.map(mirror)
 
-        let neckDepth = garment == .cardigan ? yoke * 0.95 : yoke * 0.3
-        let neck = garment == .cardigan
-            ? [CGPoint(x: -neckHalf, y: 0), CGPoint(x: 0, y: neckDepth), CGPoint(x: neckHalf, y: 0)]
-            : [CGPoint(x: -neckHalf, y: 0), CGPoint(x: -neckHalf * 0.6, y: neckDepth * 0.8), CGPoint(x: 0, y: neckDepth),
-               CGPoint(x: neckHalf * 0.6, y: neckDepth * 0.8), CGPoint(x: neckHalf, y: 0)]
+        let neckDepth: Double = switch (neckline, garment) {
+        case (.v, .cardigan): yoke * 0.95
+        case (.v, .pullover): yoke * 0.55
+        case (.round, _): yoke * 0.3
+        }
+        let neck = neckline == .v
+            ? [neckL, CGPoint(x: 0, y: neckDepth), mirror(neckL)]
+            : [neckL, CGPoint(x: -neckHalf * 0.6, y: neckDepth * 0.8), CGPoint(x: 0, y: neckDepth),
+               CGPoint(x: neckHalf * 0.6, y: neckDepth * 0.8), mirror(neckL)]
         let centreFront = garment == .cardigan ? (CGPoint(x: 0, y: neckDepth), CGPoint(x: 0, y: yoke + length)) : nil
+
+        // A round yoke: its lower edge dips a little at the centre, with ribs fanning out from the neck.
+        var details: [[CGPoint]] = []
+        if shape == .yoke {
+            let control = CGPoint(x: 0, y: yoke * 1.2)
+            func edge(_ t: Double) -> CGPoint {
+                let a = underarmL, c = mirror(underarmL), u = 1 - t
+                return CGPoint(x: u * u * a.x + 2 * u * t * control.x + t * t * c.x, y: u * u * a.y + 2 * u * t * control.y + t * t * c.y)
+            }
+            details.append(stride(from: 0.0, through: 1, by: 0.05).map(edge))
+            func neckPoint(_ t: Double) -> CGPoint {
+                let x = -neckHalf + 2 * neckHalf * t
+                let depth = neckline == .v ? neckDepth * (1 - abs(x) / neckHalf) : neckDepth * (1 - pow(x / neckHalf, 2))
+                return CGPoint(x: x, y: depth)
+            }
+            for k in 1...13 {
+                let t = Double(k) / 14
+                details.append([neckPoint(t), edge(t)])
+            }
+        }
 
         func add(_ a: CGPoint, _ b: CGPoint, _ k: CGFloat) -> CGPoint { CGPoint(x: a.x + b.x * k, y: a.y + b.y * k) }
         let shapes = body + leftSleeve + rightSleeve
@@ -110,7 +142,8 @@ public struct SchematicDrawing {
         let gFrom = add(mid, upL, upperArm / 2 + 2.5), gTo = add(end, upL, cuff / 2 + 2.5)
 
         let notes: [Annotation] = [
-            Annotation(.yokeDepth, CGPoint(x: dimX, y: 0), CGPoint(x: dimX, y: yoke), CGPoint(x: dimX - 1.5, y: yoke / 2), .right),
+            Annotation(.yokeDepth, CGPoint(x: dimX, y: shape == .setIn ? shoulderDrop : 0), CGPoint(x: dimX, y: yoke),
+                       CGPoint(x: dimX - 1.5, y: yoke / 2), .right),
             Annotation(.bodyLength, CGPoint(x: dimX, y: yoke), CGPoint(x: dimX, y: yoke + length),
                        CGPoint(x: dimX - 1.5, y: yoke + length * 0.65), .right),
             Annotation(.chest, CGPoint(x: -w / 2, y: yoke + 3), CGPoint(x: w / 2, y: yoke + 3), CGPoint(x: 0, y: yoke + 5.5), .center),
@@ -128,7 +161,7 @@ public struct SchematicDrawing {
         let bounds = CGRect(x: xs.min()! - 18, y: ys.min()! - 3, width: xs.max()! - xs.min()! + 36, height: ys.max()! - ys.min()! + 6)
         return Geometry(
             body: body, leftSleeve: leftSleeve, rightSleeve: rightSleeve, neck: neck,
-            centreFront: centreFront, annotations: notes, bounds: bounds
+            centreFront: centreFront, details: details, annotations: notes, bounds: bounds
         )
     }
 
@@ -158,6 +191,15 @@ public struct SchematicDrawing {
         ctx.beginPath()
         ctx.addLines(between: g.neck.map(p))
         ctx.strokePath()
+        ctx.saveGState()
+        ctx.setStrokeColor(Ink.line)
+        ctx.setLineWidth(0.6)
+        for d in g.details {
+            ctx.beginPath()
+            ctx.addLines(between: d.map(p))
+            ctx.strokePath()
+        }
+        ctx.restoreGState()
         if let (a, b) = g.centreFront {
             ctx.beginPath()
             ctx.move(to: p(a))

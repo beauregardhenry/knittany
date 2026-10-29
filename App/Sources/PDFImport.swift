@@ -119,7 +119,7 @@ struct PDFImportSheet: View {
     }
 
     var chooser: some View {
-        let hasKey = APIKeyStore.key != nil
+        let hasKey = APIKeyStore.hasKey
         return VStack(alignment: .leading, spacing: 16) {
             Text("Import \(session.fileName)").font(.headline)
             Text("The pattern is read into a draft: its sizes, gauge, finished measurements, and every number that changes with size. You check and correct the draft before it's saved.")

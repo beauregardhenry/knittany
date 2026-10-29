@@ -14,6 +14,7 @@
 		24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */; };
 		422E9E7DCB84DEEA9F05C994 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08469460AAB3845E0D5D70B1 /* Keychain.swift */; };
 		6665CFDEC3BD57680831D44F /* PDFImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D409F5F48D5807180C0AF50 /* PDFImport.swift */; };
+		707DF1979557E0B87852674E /* KnitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39C8D7D38BBB35BC040F137 /* KnitView.swift */; };
 		7D250287DC97431C4718CB06 /* KnitRender in Frameworks */ = {isa = PBXBuildFile; productRef = 323275201F7584CE5EDFD59E /* KnitRender */; };
 		893EC497F44CD5BFE215A875 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DDAD4F81ABE7839E949DF5A /* Assets.xcassets */; };
 		B35A2A036778F5E4FD379FFF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */; };
@@ -39,6 +40,7 @@
 		85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryModel.swift; sourceTree = "<group>"; };
 		A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B3E53E0D182170B29D4AEF65 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		D39C8D7D38BBB35BC040F137 /* KnitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnitView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */,
 				08469460AAB3845E0D5D70B1 /* Keychain.swift */,
 				104E554D2F5770152941B41F /* KnittingApp.swift */,
+				D39C8D7D38BBB35BC040F137 /* KnitView.swift */,
 				85ABB2D310E6906FA831D9D5 /* LibraryModel.swift */,
 				227F539979EA03D3FCA0FFE6 /* PatternView.swift */,
 				6D409F5F48D5807180C0AF50 /* PDFImport.swift */,
@@ -179,6 +182,7 @@
 				B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */,
 				E5900B8390A11587966264C1 /* ImportReviewView.swift in Sources */,
 				422E9E7DCB84DEEA9F05C994 /* Keychain.swift in Sources */,
+				707DF1979557E0B87852674E /* KnitView.swift in Sources */,
 				CECADE096DC4EECC32383D4A /* KnittingApp.swift in Sources */,
 				24ECA98125939548B199BA68 /* LibraryModel.swift in Sources */,
 				6665CFDEC3BD57680831D44F /* PDFImport.swift in Sources */,

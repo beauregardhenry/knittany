@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var key = ""
-    @State private var saved = APIKeyStore.key != nil
+    @State private var saved = APIKeyStore.hasKey
     @State private var problem: String?
 
     var body: some View {
@@ -13,7 +13,7 @@ struct SettingsView: View {
                     Button("Save Key") {
                         do {
                             try APIKeyStore.save(key)
-                            saved = APIKeyStore.key != nil
+                            saved = APIKeyStore.hasKey
                             key = ""
                             problem = nil
                         } catch {

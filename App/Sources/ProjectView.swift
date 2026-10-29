@@ -13,6 +13,9 @@ struct ProjectView: View {
     @State private var problem: String?
     @State private var exporting = false
     @State private var gaugePerInches = Locale.current.measurementSystem == .us
+    @State private var mode = Mode.pattern
+
+    enum Mode { case pattern, knit }
 
     struct Output {
         var result: GradeResult
@@ -21,24 +24,52 @@ struct ProjectView: View {
     }
 
     var pattern: KnitCore.Pattern? { model.pattern(project.patternID) }
+
+    /// Everything that changes the regraded pattern; ticking off steps or editing notes doesn't.
+    struct RegradeInputs: Equatable {
+        var project: Project
+        init(_ p: Project) {
+            project = p
+            project.progress = nil
+            project.notes = ""
+            project.name = ""
+        }
+    }
+
+    var regradeInputs: RegradeInputs { RegradeInputs(project) }
     var person: Person? { model.person(project.personID) }
 
     var body: some View {
-        HSplitView {
-            settings
-                .frame(minWidth: 340, idealWidth: 390, maxWidth: 480)
-            preview
-                .frame(minWidth: 420)
+        Group {
+            if mode == .knit {
+                // While knitting, the instructions get the whole window.
+                preview.frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                HSplitView {
+                    settings
+                        .frame(minWidth: 340, idealWidth: 390, maxWidth: 480, maxHeight: .infinity)
+                    preview
+                        .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
         }
         .navigationTitle(project.name)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Picker("View", selection: $mode) {
+                    Text("Pattern").tag(Mode.pattern)
+                    Text("Knit").tag(Mode.knit)
+                }
+                .pickerStyle(.segmented)
+                .help("Pattern shows the regraded pattern as it prints; Knit is a checklist with a row counter")
+            }
             ToolbarItem {
                 Button("Export PDF…", systemImage: "square.and.arrow.up") { exporting = true }
                     .disabled(output == nil)
             }
         }
-        .task(id: project) {
-            model.update(project)
+        .onChange(of: project) { model.update(project) }
+        .task(id: regradeInputs) {
             try? await Task.sleep(for: .milliseconds(200))
             guard !Task.isCancelled else { return }
             regenerate()
@@ -73,6 +104,8 @@ struct ProjectView: View {
                 problem = "Choose who this is for, or enter a finished chest measurement under Changes."
             } else if person?.measurements[.chest] == nil && project.finishedOverrides[pattern.primaryDimension] == nil {
                 problem = "Enter \(person?.name ?? "their")'s chest measurement to regrade."
+            } else if pattern.statedEase?[pattern.primaryDimension] == nil && project.easeOverrides[pattern.primaryDimension] == nil {
+                problem = "This pattern doesn't say how much ease it has. Enter the ease you'd like at the \(pattern.primaryDimension.label.lowercased()) under Ease, on the left."
             } else {
                 problem = "Couldn't regrade: \(error)"
             }
@@ -126,6 +159,27 @@ struct ProjectView: View {
     @ViewBuilder
     var fitSection: some View {
         Section {
+            if output == nil, let pattern, pattern.statedEase?[pattern.primaryDimension] == nil {
+                // Without the designer's ease there's nothing to regrade from until the knitter gives one.
+                let d = pattern.primaryDimension
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("\(d.label) ease")
+                        Spacer()
+                        LengthField(
+                            title: "Ease",
+                            cm: Binding(get: { project.easeOverrides[d] }, set: { project.easeOverrides[d] = $0 }),
+                            units: project.units, prompt: "enter ease"
+                        )
+                        .labelsHidden()
+                        .frame(width: 130)
+                    }
+                    if let sizes = pattern.schematic.first(where: { $0.dimension == d }) {
+                        Text("The pattern doesn't say how much ease it has. Its finished \(d.label.lowercased()) is \(sizes.values.map { LengthText.format($0, project.units) }.joined(separator: ", ")) for sizes \(pattern.sizes.joined(separator: ", ")); compare with \(person?.name ?? "the wearer")'s measurement.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
             if let output {
                 Text("Closest published sizes: \(output.result.position).").font(.callout)
                 ForEach(Array(output.plan.targets.enumerated()), id: \.offset) { _, t in
@@ -274,7 +328,15 @@ struct ProjectView: View {
                     .padding(10)
                     .background(.orange.opacity(0.15))
                 }
-                PDFPreview(data: output.pdf)
+                switch mode {
+                case .pattern:
+                    PDFPreview(data: output.pdf)
+                case .knit:
+                    KnitView(result: output.result, progress: Binding(
+                        get: { project.progress ?? KnittingProgress() },
+                        set: { project.progress = $0 }
+                    ))
+                }
             } else {
                 ProgressView()
             }

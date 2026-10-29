@@ -122,3 +122,33 @@ struct ExportTests {
         #expect(text.components(separatedBy: "Knit a very long row").count - 1 == 400)
     }
 }
+
+@Suite("Schematic shapes and knitting progress")
+struct ShapeAndProgressTests {
+    func result(_ shape: SleeveShape) throws -> GradeResult {
+        var p = try Pattern.load(from: Bundle.module.url(forResource: "test-sweater", withExtension: "json", subdirectory: "Fixtures")!)
+        p.shape = shape
+        return try Grader(pattern: p).grade(GradeRequest(targets: [.chest: 100]))
+    }
+
+    @Test func raglansAndYokesHaveNoShoulderLine() throws {
+        let setIn = SchematicDrawing(result: try result(.setIn)).geometry()
+        let raglan = SchematicDrawing(result: try result(.raglan)).geometry()
+        let yoke = SchematicDrawing(result: try result(.yoke)).geometry()
+        #expect(setIn.body.count == 8 && raglan.body.count == 6)
+        #expect(raglan.leftSleeve[0] == raglan.body[0], "the raglan sleeve runs up to the neck")
+        #expect(yoke.details.count > 5 && setIn.details.isEmpty)
+    }
+
+    @Test func progressSurvivesSaving() throws {
+        var project = Project(name: "P", patternID: UUID())
+        project.progress = KnittingProgress(done: [KnittingProgress.key(section: "Yoke", line: 3)], counter: 12)
+        let data = try JSONEncoder().encode(project)
+        #expect(try JSONDecoder().decode(Project.self, from: data) == project)
+        // Projects saved before knitting mode existed still load.
+        var old = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+        old["progress"] = nil
+        let legacy = try JSONDecoder().decode(Project.self, from: JSONSerialization.data(withJSONObject: old))
+        #expect(legacy.progress == nil)
+    }
+}

@@ -11,7 +11,7 @@ struct RootView: View {
             List(selection: $model.selection) {
                 Section("Projects") {
                     ForEach(model.projects) { p in
-                        Label(p.name, systemImage: "scissors").tag(SidebarItem.project(p.id))
+                        Label(p.name, systemImage: "tshirt").tag(SidebarItem.project(p.id))
                     }
                     if model.projects.isEmpty {
                         Text("Open a pattern and choose New Project").font(.caption).foregroundStyle(.secondary)
@@ -75,7 +75,7 @@ struct RootView: View {
 struct WelcomeView: View {
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: "scissors").font(.system(size: 40)).foregroundStyle(.secondary)
+            Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 96, height: 96)
             Text("Knitting").font(.title)
             Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF (or a pattern file) and check what was read.\n3. Open the pattern and choose New Project.")
                 .multilineTextAlignment(.leading)

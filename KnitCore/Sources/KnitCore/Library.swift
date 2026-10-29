@@ -39,12 +39,15 @@ public struct Project: Codable, Sendable, Identifiable, Equatable {
     public var units: UnitPreference
     public var createdAt: Date
     public var notes: String
+    /// Where the knitter is: ticked-off steps and the row counter.
+    public var progress: KnittingProgress?
 
     public init(
         id: UUID = UUID(), name: String, patternID: UUID, personID: UUID? = nil,
         options: [String: Double] = [:], gauge: Gauge? = nil,
         easeOverrides: [GarmentMeasure: Double] = [:], finishedOverrides: [GarmentMeasure: Double] = [:],
-        units: UnitPreference = .cmFirst, createdAt: Date = Date(), notes: String = ""
+        units: UnitPreference = .cmFirst, createdAt: Date = Date(), notes: String = "",
+        progress: KnittingProgress? = nil
     ) {
         self.id = id
         self.name = name
@@ -57,6 +60,7 @@ public struct Project: Codable, Sendable, Identifiable, Equatable {
         self.units = units
         self.createdAt = createdAt
         self.notes = notes
+        self.progress = progress
     }
 
     /// Regrades the pattern for this project. Only measurements the person
@@ -74,6 +78,20 @@ public struct Project: Codable, Sendable, Identifiable, Equatable {
         )
         return (result, plan)
     }
+}
+
+/// Progress through a regraded pattern while knitting it.
+public struct KnittingProgress: Codable, Sendable, Equatable {
+    /// Steps ticked off, as "section title|line number" (0-based).
+    public var done: Set<String> = []
+    public var counter: Int = 0
+
+    public init(done: Set<String> = [], counter: Int = 0) {
+        self.done = done
+        self.counter = counter
+    }
+
+    public static func key(section: String, line: Int) -> String { "\(section)|\(line)" }
 }
 
 public struct PatternEntry: Codable, Sendable, Identifiable, Equatable {

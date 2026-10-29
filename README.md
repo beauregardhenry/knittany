@@ -109,14 +109,17 @@ cd KnitCore && swift run knit read ../Patterns/dipped-arms.pdf --pattern /tmp/di
 cd App && xcodegen generate && xcodebuild -project Knitting.xcodeproj -scheme Knitting -configuration Release -destination 'generic/platform=macOS' -derivedDataPath ../build/DerivedData build
 ```
 
-The app is ad-hoc signed for now; Developer ID signing and notarization come
-once the Apple Developer account is set up.
+The app is ad-hoc signed for now. Once the Apple Developer account is set up,
+`scripts/release.sh` builds, signs with Developer ID, notarizes and staples
+the app (the one-time setup is at the top of the script).
 
 ## Using the app
 
 1. **People**: add the person and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates for reference; regrading uses only what you measured.
 2. **Patterns**: **Import Pattern…** (⌘I) a PDF, or open a PDF with Knitting, and check the draft before saving. Pattern files (`.json`) import directly; attach the original PDF so its chart pages are included.
-3. **New Project** (on the pattern): pick the person and version. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
+3. **New Project** (on the pattern): pick the person and version. If the pattern doesn't state its ease, enter the ease you want under Ease. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
+
+4. **Knit**: switch the project to Knit for a checklist of every step, with the next step highlighted and a row counter (`-` and `=` keys). Progress is saved with the project.
 
 Everything is kept as plain files in `~/Library/Application Support/Knitting/` (backed up by Time Machine). Deleted patterns go to the Trash.
 
