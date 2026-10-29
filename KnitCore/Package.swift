@@ -7,15 +7,17 @@ let package = Package(
     products: [
         .library(name: "KnitCore", targets: ["KnitCore"]),
         .library(name: "KnitRender", targets: ["KnitRender"]),
+        .library(name: "KnitImport", targets: ["KnitImport"]),
         .executable(name: "knit", targets: ["knit"]),
     ],
     targets: [
         .target(name: "KnitCore"),
         .target(name: "KnitRender", dependencies: ["KnitCore"]),
-        .executableTarget(name: "knit", dependencies: ["KnitCore", "KnitRender"]),
+        .target(name: "KnitImport", dependencies: ["KnitCore"]),
+        .executableTarget(name: "knit", dependencies: ["KnitCore", "KnitRender", "KnitImport"]),
         .testTarget(
             name: "KnitCoreTests",
-            dependencies: ["KnitCore", "KnitRender"],
+            dependencies: ["KnitCore", "KnitRender", "KnitImport"],
             resources: [.copy("Fixtures")]
         ),
     ]

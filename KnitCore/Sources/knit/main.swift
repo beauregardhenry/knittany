@@ -1,11 +1,14 @@
 import Foundation
 import KnitCore
+import KnitImport
 import KnitRender
 
 let usage = """
     knit regrade <pattern.json> --chest <body> [measurements] [options]
     knit check <pattern.json>
     knit import <pattern.json> [--source-pdf <original.pdf>]   adds it to the app's library
+    knit read <original.pdf> [--ai] [--text] [--draft <draft.json>] [--pattern <pattern.json>]
+        reads a pattern PDF (offline, or with Claude using ANTHROPIC_API_KEY)
 
     Body measurements (a number is cm; add "in" for inches, e.g. 38in):
       --chest --waist --hip --upper-arm --wrist --arm-length
@@ -48,6 +51,11 @@ var args = Array(CommandLine.arguments.dropFirst())
 guard args.count >= 2 else { fail(usage) }
 let command = args.removeFirst()
 let path = args.removeFirst()
+
+if command == "read" {
+    readPDF(URL(fileURLWithPath: path), args)
+    exit(0)
+}
 
 let pattern: Pattern
 do {

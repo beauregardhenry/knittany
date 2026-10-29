@@ -46,4 +46,10 @@ public struct SourcePage: Codable, Sendable, Equatable {
     /// 1-based page number in the original PDF.
     public var page: Int
     public var when: String?
+
+    public init(title: String, page: Int, when: String? = nil) {
+        self.title = title
+        self.page = page
+        self.when = when
+    }
 }

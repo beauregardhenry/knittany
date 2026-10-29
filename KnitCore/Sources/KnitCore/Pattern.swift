@@ -69,6 +69,31 @@ public struct Pattern: Codable, Sendable {
         }
         return p
     }
+
+    public init(
+        name: String, designer: String? = nil, source: String? = nil, construction: String? = nil,
+        garment: GarmentType? = nil, sizes: [String], gauge: Gauge, primaryDimension: GarmentMeasure = .chest,
+        statedEase: [GarmentMeasure: Double]? = nil, options: [PatternOption]? = nil, schematic: [SchematicEntry],
+        quantities: [Quantity], checks: [PatternCheck]? = nil, sections: [Section], charts: [Chart]? = nil,
+        sourcePages: [SourcePage]? = nil
+    ) {
+        self.name = name
+        self.designer = designer
+        self.source = source
+        self.construction = construction
+        self.garment = garment
+        self.sizes = sizes
+        self.gauge = gauge
+        self.primaryDimension = primaryDimension
+        self.statedEase = statedEase
+        self.options = options
+        self.schematic = schematic
+        self.quantities = quantities
+        self.checks = checks
+        self.sections = sections
+        self.charts = charts
+        self.sourcePages = sourcePages
+    }
 }
 
 public enum GarmentType: String, Codable, Sendable {
@@ -102,6 +127,15 @@ public struct SchematicEntry: Codable, Sendable {
     public var when: String?
     /// Formula for what the regraded stitch counts actually give, in cm.
     public var achieved: String?
+
+    public init(id: String, label: String, dimension: GarmentMeasure, values: [Double], when: String? = nil, achieved: String? = nil) {
+        self.id = id
+        self.label = label
+        self.dimension = dimension
+        self.values = values
+        self.when = when
+        self.achieved = achieved
+    }
 }
 
 public enum QuantityKind: String, Codable, Sendable {
@@ -159,6 +193,24 @@ public struct Quantity: Codable, Sendable {
     public func designerValue(size index: Int) -> Double? {
         values?[index] ?? value
     }
+
+    public init(
+        id: String, kind: QuantityKind, label: String? = nil, values: [Double]? = nil, value: Double? = nil,
+        driver: GarmentMeasure? = nil, mode: GradeMode? = nil, formula: String? = nil, round: Rounding? = nil,
+        per: ScaleBasis? = nil, internal: Bool? = nil
+    ) {
+        self.id = id
+        self.kind = kind
+        self.label = label
+        self.values = values
+        self.value = value
+        self.driver = driver
+        self.mode = mode
+        self.formula = formula
+        self.round = round
+        self.per = per
+        self.internal = `internal`
+    }
 }
 
 public struct PatternCheck: Codable, Sendable {
@@ -173,4 +225,10 @@ public struct Section: Codable, Sendable {
     public var when: String?
     /// Instruction lines. A line starting with "## " is a sub-heading.
     public var lines: [String]
+
+    public init(title: String, when: String? = nil, lines: [String]) {
+        self.title = title
+        self.when = when
+        self.lines = lines
+    }
 }
