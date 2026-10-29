@@ -14,7 +14,7 @@ struct PatternView: View {
         if let pattern = model.pattern(entry.id) {
             Form {
                 Section {
-                    LabeledContent("Designer", value: pattern.designer ?? "–")
+                    if let designer = pattern.designer { LabeledContent("Designer", value: designer) }
                     if let c = pattern.construction { LabeledContent("Construction") { Text(c).multilineTextAlignment(.trailing) } }
                     LabeledContent("Sizes", value: pattern.sizes.joined(separator: ", "))
                     LabeledContent("Gauge", value: MeasureFormatter().gauge(pattern.gauge))
@@ -27,11 +27,14 @@ struct PatternView: View {
                     HStack {
                         Button("New Project", systemImage: "plus") { model.addProject(patternID: entry.id) }
                             .buttonStyle(.borderedProminent)
+                        if pattern.design != nil {
+                            Button("Edit Design…", systemImage: "wand.and.stars") { model.editDesign(entry.id) }
+                        }
                         Spacer()
                     }
                 }
 
-                Section("Original PDF") {
+                if pattern.design == nil { Section("Original PDF") {
                     if entry.hasSourcePDF {
                         LabeledContent("Attached") {
                             Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([model.store.sourcePDFURL(entry.id)]) }
@@ -45,7 +48,7 @@ struct PatternView: View {
                         .foregroundStyle(.secondary)
                     }
                     Button(entry.hasSourcePDF ? "Replace PDF…" : "Attach PDF…") { attachingPDF = true }
-                }
+                } }
 
                 Section("Published measurements") {
                     Grid(alignment: .trailing, horizontalSpacing: 14, verticalSpacing: 6) {

@@ -31,6 +31,11 @@ public struct FitPlan: Sendable {
     public var targets: [FitTarget]
     public var notes: [String]
 
+    public init(targets: [FitTarget] = [], notes: [String] = []) {
+        self.targets = targets
+        self.notes = notes
+    }
+
     public var gradeTargets: [GarmentMeasure: Double] {
         Dictionary(targets.map { ($0.dimension, $0.finished) }) { first, _ in first }
     }

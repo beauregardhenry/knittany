@@ -7,6 +7,8 @@ let usage = """
     knit regrade <pattern.json> --chest <body> [measurements] [options]
     knit check <pattern.json>
     knit import <pattern.json> [--source-pdf <original.pdf>]   adds it to the app's library
+    knit design [choice=value …] --pattern <pattern.json>
+        writes a new pattern from design choices, e.g. construction=yoke garment=cardigan fit=relaxed
     knit read <original.pdf> [--ai] [--text] [--draft <draft.json>] [--pattern <pattern.json>]
         reads a pattern PDF (offline, or with Claude using ANTHROPIC_API_KEY)
 
@@ -51,6 +53,11 @@ var args = Array(CommandLine.arguments.dropFirst())
 guard args.count >= 2 else { fail(usage) }
 let command = args.removeFirst()
 let path = args.removeFirst()
+
+if command == "design" {
+    designPattern([path] + args)
+    exit(0)
+}
 
 if command == "read" {
     readPDF(URL(fileURLWithPath: path), args)

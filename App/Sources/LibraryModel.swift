@@ -20,6 +20,8 @@ final class LibraryModel {
     var choosingImport = false
     /// A pattern PDF being read and reviewed.
     var pdfImport: PDFImport?
+    /// A sweater being designed from scratch, or a designed pattern being changed.
+    var designing: DesignSession?
     private var patternCache: [UUID: KnitCore.Pattern] = [:]
 
     /// `KNITTING_LIBRARY` points the app at another folder, for testing.
@@ -110,6 +112,27 @@ final class LibraryModel {
             selection = .pattern(entry.id)
         } catch {
             errorMessage = "Couldn't import \(url.lastPathComponent): \(error)"
+        }
+    }
+
+    func newDesign() {
+        var choices = DesignChoices()
+        if let g = index.projects.first?.gauge { choices.gauge = g }
+        designing = DesignSession(choices: choices)
+    }
+
+    func editDesign(_ id: UUID) {
+        guard let choices = pattern(id)?.design else { return }
+        designing = DesignSession(choices: choices, patternID: id)
+    }
+
+    func replacePattern(_ id: UUID, with pattern: KnitCore.Pattern) {
+        do {
+            try store.replacePattern(id, with: pattern, in: &index)
+            patternCache[id] = pattern
+            selection = .pattern(id)
+        } catch {
+            errorMessage = "Couldn't save \(pattern.name): \(error)"
         }
     }
 

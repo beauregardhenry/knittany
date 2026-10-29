@@ -63,6 +63,24 @@ increases moved onto WS rows ("rapid increases") when the yoke must be
 shallower, and plain rows when it must be deeper. Sleeve decreases are
 spaced to fit the designer's sleeve length, on whole stripes.
 
+## Designing a sweater from scratch
+
+**Design a Sweater…** (⇧⌘D) writes a new pattern from the knitter's choices:
+a top-down raglan or round yoke, pullover or cardigan, crew or wide neck, fit
+(close to oversized), length, body shape, sleeve length and shape, edge
+finishes (2x2 or 1x1 rib, garter, rolled), stripes, and the swatch gauge.
+
+The design is drawn for the nine Craft Yarn Council sizes, XS–5X, using
+their body measurements plus the ease of the chosen fit. Every stitch and row
+count is a formula over the finished measurements and the gauge, so the
+result is an ordinary pattern: a project regrades it to anyone's
+measurements, with a schematic, PDF and knitting mode. Raglans use the same
+body-only, sleeve-only and rapid increases as the raglan model; round yokes
+spread their increases over three to six rounds, so no round more than about
+doubles the stitches. **Edit Design…** on a designed pattern changes the choices
+later. `knit design construction=yoke garment=cardigan …` does the same from
+the command line.
+
 ## Importing a pattern PDF
 
 A PDF is read into a *draft* that the knitter checks before it's saved:
@@ -139,4 +157,4 @@ holds a made-up pattern that is safe to publish.
 5. Raglan ✅ (stripey raglan), then set-in sleeves and other top-down constructions
 6. Signing and notarization
 7. Bottom-up and seamed sweaters
-8. Later: new patterns from the knitter's design choices
+8. ✅ New patterns from the knitter's design choices (top-down raglan and round yoke); more constructions later

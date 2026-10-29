@@ -25,6 +25,8 @@ public struct Pattern: Codable, Sendable {
     public var sections: [Section]
     public var charts: [Chart]?
     public var sourcePages: [SourcePage]?
+    /// For a pattern designed in the app: the choices it was made from, so it can be edited.
+    public var design: DesignChoices?
 
     public static func load(from url: URL) throws -> Pattern {
         let pattern = try JSONDecoder().decode(Pattern.self, from: Data(contentsOf: url))

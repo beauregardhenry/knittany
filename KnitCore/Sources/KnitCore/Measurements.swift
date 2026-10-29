@@ -29,6 +29,8 @@ public enum GarmentMeasure: String, Codable, Sendable, CaseIterable, CodingKeyRe
     case sleeveLength
     case crossBack
     case neckWidth
+    /// Circumference of the neck opening.
+    case neckOpening
 
     public var label: String {
         switch self {
@@ -42,6 +44,7 @@ public enum GarmentMeasure: String, Codable, Sendable, CaseIterable, CodingKeyRe
         case .sleeveLength: "Sleeve length"
         case .crossBack: "Cross back"
         case .neckWidth: "Neck width"
+        case .neckOpening: "Neck opening"
         }
     }
 
@@ -56,6 +59,7 @@ public enum GarmentMeasure: String, Codable, Sendable, CaseIterable, CodingKeyRe
         case .yokeDepth: .armholeDepth
         case .sleeveLength: .armLength
         case .crossBack: .crossBack
+        case .neckOpening: .neck
         case .bodyLength, .neckWidth: nil
         }
     }

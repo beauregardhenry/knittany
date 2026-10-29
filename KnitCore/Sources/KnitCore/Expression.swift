@@ -127,6 +127,7 @@ extension Expr {
             guard let m = v.max() else { throw ExpressionError("max() needs arguments") }
             return m
         case "clamp": try arity(3); return Swift.min(Swift.max(v[0], v[1]), v[2])
+        case "pow": try arity(2); return Foundation.pow(v[0], v[1])
         case "nearestMod":
             try arity(3)
             guard v[1] > 0 else { throw ExpressionError("nearestMod() needs a positive multiple") }

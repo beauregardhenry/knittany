@@ -30,6 +30,8 @@ struct RootView: View {
                     }
                     Button("Import Pattern…", systemImage: "square.and.arrow.down") { model.choosingImport = true }
                         .buttonStyle(.borderless)
+                    Button("Design a Sweater…", systemImage: "wand.and.stars") { model.newDesign() }
+                        .buttonStyle(.borderless)
                 }
             }
             .navigationSplitViewColumnWidth(min: 220, ideal: 240)
@@ -58,6 +60,9 @@ struct RootView: View {
             }
             return true
         }
+        .sheet(item: $model.designing) { session in
+            DesignView(session: session)
+        }
         .sheet(item: $model.pdfImport) { session in
             PDFImportSheet(session: session)
         }
@@ -77,7 +82,7 @@ struct WelcomeView: View {
         VStack(spacing: 10) {
             Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 96, height: 96)
             Text("Knitting").font(.title)
-            Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF (or a pattern file) and check what was read.\n3. Open the pattern and choose New Project.")
+            Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF and check what was read, or design a sweater from scratch.\n3. Open the pattern and choose New Project.")
                 .multilineTextAlignment(.leading)
                 .foregroundStyle(.secondary)
         }

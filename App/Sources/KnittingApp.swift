@@ -19,6 +19,8 @@ struct KnittingApp: App {
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                 Button("Import Pattern…") { model.choosingImport = true }
                     .keyboardShortcut("i", modifiers: .command)
+                Button("Design a Sweater…") { model.newDesign() }
+                    .keyboardShortcut("d", modifiers: [.command, .shift])
             }
         }
 

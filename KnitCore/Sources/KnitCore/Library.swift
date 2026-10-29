@@ -178,6 +178,19 @@ public struct LibraryStore: Sendable {
         return entry
     }
 
+    /// Replaces a pattern's file, e.g. after its design is edited.
+    public func replacePattern(_ id: UUID, with pattern: Pattern, in index: inout LibraryIndex) throws {
+        try pattern.validate()
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(pattern).write(to: patternURL(id), options: .atomic)
+        if let i = index.patterns.firstIndex(where: { $0.id == id }) {
+            index.patterns[i].name = pattern.name
+            index.patterns[i].designer = pattern.designer
+        }
+        try save(index)
+    }
+
     public func attachSourcePDF(_ pdf: URL, to id: UUID, in index: inout LibraryIndex) throws {
         let dest = sourcePDFURL(id)
         try? FileManager.default.removeItem(at: dest)

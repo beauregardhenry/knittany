@@ -67,7 +67,8 @@ public struct SchematicDrawing {
         let upperArm = (size[.upperArm] ?? chest * 0.3) / 2
         let cuff = (size[.cuff] ?? upperArm * 1.4) / 2
         let sleeve = size[.sleeveLength] ?? 44
-        let neckHalf = (size[.neckWidth] ?? w * 0.36) / 2
+        // A neck opening is drawn about a third as wide as it is round.
+        let neckHalf = (size[.neckWidth] ?? size[.neckOpening].map { $0 / 3 } ?? w * 0.36) / 2
         let shoulderDrop = yoke * 0.14
 
         let shoulderL = CGPoint(x: -w / 2, y: shoulderDrop)

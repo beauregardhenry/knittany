@@ -75,7 +75,7 @@ public enum PDFExporter {
     static func footer(_ r: GradeResult, _ o: Options) -> String {
         var s = "\(r.pattern.name)"
         if let d = r.pattern.designer { s += " by \(d)" }
-        s += " — regraded"
+        s += r.pattern.design == nil ? " — regraded" : " — your design"
         if let who = o.personName { s += " for \(who)" }
         return s
     }
@@ -109,7 +109,7 @@ public enum PDFExporter {
         let s = NSMutableAttributedString()
         s.append(line(r.pattern.name, font: Ink.font(22, bold: true), style: paragraph(after: 2)))
         var sub = r.pattern.designer.map { "Design by \($0) · " } ?? ""
-        sub += "regraded"
+        sub += r.pattern.design == nil ? "regraded" : "designed in the app"
         if let who = options.personName { sub += " for \(who)" }
         s.append(line(sub, font: Ink.font(11), color: .darkGray, style: paragraph(after: 14)))
 
