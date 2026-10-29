@@ -15,6 +15,7 @@
 		422E9E7DCB84DEEA9F05C994 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08469460AAB3845E0D5D70B1 /* Keychain.swift */; };
 		6665CFDEC3BD57680831D44F /* PDFImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D409F5F48D5807180C0AF50 /* PDFImport.swift */; };
 		7D250287DC97431C4718CB06 /* KnitRender in Frameworks */ = {isa = PBXBuildFile; productRef = 323275201F7584CE5EDFD59E /* KnitRender */; };
+		893EC497F44CD5BFE215A875 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DDAD4F81ABE7839E949DF5A /* Assets.xcassets */; };
 		B35A2A036778F5E4FD379FFF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F2DEA74704A2D5FD05A91A /* SettingsView.swift */; };
 		B9227D916CC51A0ABEF048BC /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54770BE37041D9FAC3D4C261 /* Fields.swift */; };
 		C65050E8CA3D095CD2C96D95 /* PersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECE2839928216D998879067 /* PersonView.swift */; };
@@ -28,6 +29,7 @@
 		104E554D2F5770152941B41F /* KnittingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnittingApp.swift; sourceTree = "<group>"; };
 		227F539979EA03D3FCA0FFE6 /* PatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternView.swift; sourceTree = "<group>"; };
 		27EF60011A75D674021247CE /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
+		3DDAD4F81ABE7839E949DF5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		54770BE37041D9FAC3D4C261 /* Fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fields.swift; sourceTree = "<group>"; };
 		6662AFD598C41E5CC43505BC /* Knitting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Knitting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportReviewView.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		690AA9D6BA54E5B65597374F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				3DDAD4F81ABE7839E949DF5A /* Assets.xcassets */,
 				54770BE37041D9FAC3D4C261 /* Fields.swift */,
 				6D3E0D8DE301580A5BCA68E0 /* ImportReviewView.swift */,
 				08469460AAB3845E0D5D70B1 /* Keychain.swift */,
@@ -104,6 +107,7 @@
 			buildConfigurationList = D0DA4C0C85C97E149E6EEED8 /* Build configuration list for PBXNativeTarget "Knitting" */;
 			buildPhases = (
 				D3F2A39F1C8C109454EFA132 /* Sources */,
+				867263D18CB0CB7D71FE0C0E /* Resources */,
 				81011A236B4111AC0CEB2054 /* Frameworks */,
 			);
 			buildRules = (
@@ -155,6 +159,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		867263D18CB0CB7D71FE0C0E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				893EC497F44CD5BFE215A875 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D3F2A39F1C8C109454EFA132 /* Sources */ = {
