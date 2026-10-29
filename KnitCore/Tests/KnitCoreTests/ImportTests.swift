@@ -211,3 +211,12 @@ struct RealPDFTests {
         _ = try DraftBuilder.pattern(from: draft)
     }
 }
+
+@Suite("Size notation")
+struct SizeNotationTests {
+    @Test func readsBothStyles() {
+        let runs = Reader.runs(in: "CO 142 (148, 154) sts, then k35 (41) 47 sts. Row 52 (64) 76 (WSA). Work 4 (5), p2.")
+        #expect(runs.map(\.values) == [[142, 148, 154], [35, 41, 47], [52, 64, 76], [4, 5]])
+        #expect(runs.map(\.unit) == [.stitches, .stitches, nil, nil])
+    }
+}

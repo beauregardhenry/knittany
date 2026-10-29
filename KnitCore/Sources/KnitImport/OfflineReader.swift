@@ -144,8 +144,10 @@ struct Reader {
                 continue
             }
             if after.contains("ridges") { rows *= 2 }
-            let stitchPattern = #"(stockinette|stocking|garter|seed|moss|brioche|lace|colou?rwork|\w+ rib(?:bing)?|pattern)(?: stitch| st)?"#
-            let stitch = (firstMatch(stitchPattern, in: after, options: .caseInsensitive) ?? firstMatch(stitchPattern, in: around, options: .caseInsensitive))?[0] ?? ""
+            let stitchPattern = #"(\bst st\b|stockinette|stocking|garter|seed|moss|brioche|lace|colou?rwork|\w+ rib(?:bing)?|pattern)(?: stitch| st)?"#
+            let before = String(p.text.lowercased().components(separatedBy: m[0].lowercased()).first?.suffix(60) ?? "")
+            var stitch = [after, before, around].lazy.compactMap { firstMatch(stitchPattern, in: $0, options: .caseInsensitive)?[0] }.first ?? ""
+            if stitch.lowercased() == "st st" { stitch = "stockinette stitch" }
             let needle = firstMatch(#"US\s*\d+(?:\.\d+)?\s*\(?\s*\d+(?:\.\d+)?\s*mm\)?|\d+(?:\.\d+)?\s*mm"#, in: around, options: .caseInsensitive)?[0] ?? ""
             return DraftGauge(stitchesPer10cm: (sts * 4).rounded() / 4, rowsPer10cm: (rows * 4).rounded() / 4, stitchPattern: stitch, needle: needle)
         }
@@ -267,17 +269,34 @@ struct Reader {
 
     // MARK: Number runs
 
+    static let unitPattern = #"(\s*(?:cm\b|mm\b|inches\b|inch\b|in\b|"|”|″|''|yards\b|yds\b|yd\b|y\b|m\b|g\b|sts\b|stitches\b|st\b|rows\b|row\b|rnds\b|rnd\b|rounds\b|round\b|garter ridges\b|ridges\b|(?:more )?times\b))?"#
+
+    /// "142 (148, 154) sts" or "1 [2, 3]": the first size, then the others in brackets.
     static let runPattern = try! NSRegularExpression(
-        pattern: #"(?<![\d.])(\d+(?:\.\d+)?)\s*[(\[]\s*(\d+(?:\.\d+)?(?:\s*,\s*\d+(?:\.\d+)?)*)\s*[)\]](\s*(?:cm\b|mm\b|inches\b|inch\b|in\b|"|”|″|''|yards\b|yds\b|yd\b|y\b|m\b|g\b|sts\b|stitches\b|st\b|rows\b|row\b|rnds\b|rnd\b|rounds\b|round\b|garter ridges\b|ridges\b|(?:more )?times\b))?"#,
+        pattern: #"(?<![\d.])(\d+(?:\.\d+)?)\s*[(\[]\s*(\d+(?:\.\d+)?(?:\s*,\s*\d+(?:\.\d+)?)*)\s*[)\]]"# + unitPattern,
+        options: [.caseInsensitive]
+    )
+
+    /// "52 (64) 76": every other size in brackets.
+    static let alternatingRunPattern = try! NSRegularExpression(
+        pattern: #"(?<![\d.])(\d+(?:\.\d+)?)((?:\s*\(\s*\d+(?:\.\d+)?\s*\)\s*\d+(?:\.\d+)?)+)(?![\d.])"# + unitPattern,
         options: [.caseInsensitive]
     )
 
     static func runs(in text: String) -> [SizeRun] {
         let ns = text as NSString
-        return runPattern.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap { m in
+        let all = NSRange(location: 0, length: ns.length)
+        // "52 (64) 76" also looks like a two-size "52 (64)", so the longer reading wins.
+        let alternating = alternatingRunPattern.matches(in: text, range: all)
+        let bracketed = runPattern.matches(in: text, range: all).filter { b in
+            !alternating.contains { NSIntersectionRange($0.range, b.range).length > 0 }
+        }
+        return (bracketed + alternating).sorted { $0.range.location < $1.range.location }.compactMap { m in
             guard let range = Range(m.range, in: text) else { return nil }
             let first = Double(ns.substring(with: m.range(at: 1)))
-            let rest = ns.substring(with: m.range(at: 2)).split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+            let rest = ns.substring(with: m.range(at: 2))
+                .split(whereSeparator: { $0 == "," || $0 == "(" || $0 == ")" || $0 == " " })
+                .compactMap { Double($0) }
             guard let first else { return nil }
             let unitText = m.range(at: 3).location == NSNotFound ? "" : ns.substring(with: m.range(at: 3)).trimmingCharacters(in: .whitespaces).lowercased()
             let unit: SizeRun.Unit?

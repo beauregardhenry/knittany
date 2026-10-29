@@ -52,6 +52,17 @@ between back, sleeves and the drapey fronts from the target measurements, and
 include only the yoke stages that size needs. The designer check reproduces
 all three sizes exactly and gets the middle size exactly when it's hidden.
 
+### Raglans
+
+In a raglan the same increases widen the body and the sleeves, so the bust is
+tied to the upper arm (for the stripey raglan, bust = 2 × arm + 28 sts), and
+the number of increase rows ties both to the yoke depth. The raglan model
+undoes those ties the way a designer would: body-only or sleeve-only
+increase rows when the arm and bust don't match the designer's proportions,
+increases moved onto WS rows ("rapid increases") when the yoke must be
+shallower, and plain rows when it must be deeper. Sleeve decreases are
+spaced to fit the designer's sleeve length, on whole stripes.
+
 ## Importing a pattern PDF
 
 A PDF is read into a *draft* that the knitter checks before it's saved:
@@ -122,7 +133,7 @@ holds a made-up pattern that is safe to publish.
 2. ✅ Mac app: people and measurements, pattern library, projects, schematic and chart drawings, PDF export
 3. ✅ PDF import: offline (default) and with Claude (optional), with a check-and-correct screen
 4. ✅ Circular yoke (Marled Mania)
-5. Raglan and set-in sleeves, then other top-down constructions
+5. Raglan ✅ (stripey raglan), then set-in sleeves and other top-down constructions
 6. Signing and notarization
 7. Bottom-up and seamed sweaters
 8. Later: new patterns from the knitter's design choices

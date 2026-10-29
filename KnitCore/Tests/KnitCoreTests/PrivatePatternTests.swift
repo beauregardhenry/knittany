@@ -108,3 +108,46 @@ struct MarledManiaTests {
         }
     }
 }
+
+@Suite("Stripey raglan (top-down raglan)", .enabled(if: PrivatePatterns.exists("loupy-raglan")))
+struct RaglanTests {
+    let pattern: Pattern
+
+    init() throws {
+        pattern = try Pattern.load(from: PrivatePatterns.url("loupy-raglan"))
+    }
+
+    @Test func matchesTheDesigner() throws {
+        #expect(try DesignerCheck.consistency(pattern).isEmpty)
+        #expect(try DesignerCheck.reproduction(pattern).isEmpty)
+        let missed = try DesignerCheck.leaveOneOut(pattern).filter { $0.kind.isWhole && $0.error != 0 }
+        #expect(missed.isEmpty, "\(missed.map { "\($0.size) \($0.quantity) \($0.designer)→\($0.predicted)" })")
+    }
+
+    /// Raglan increases tie the bust to the upper arm; body-only or sleeve-only
+    /// rows take up the difference, and the yoke depth decides how many
+    /// increases go on WS rows (rapid) or how many rows are worked plain.
+    @Test func fitsBustArmAndYokeIndependently() throws {
+        let grader = try Grader(pattern: pattern)
+        for bust in stride(from: 125.0, through: 165, by: 8) {
+            for armShift in [-8.0, 0, 8] {
+                for depthShift in [-5.0, 0, 6] {
+                    let base = try grader.grade(GradeRequest(targets: [.chest: bust]))
+                    let arm = try #require(base.schematic.first { $0.entry.dimension == .upperArm }).target + armShift
+                    let depth = try #require(base.schematic.first { $0.entry.dimension == .yokeDepth }).target + depthShift
+                    let r = try grader.grade(GradeRequest(targets: [.chest: bust, .upperArm: arm, .yokeDepth: depth]))
+                    let v = r.values
+                    let label = "bust \(bust) arm \(arm) depth \(depth)"
+                    #expect(!r.warnings.contains { $0.hasPrefix("Internal") }, "\(label): \(r.warnings)")
+                    #expect(v["Xb"] == 0 || v["Xs"] == 0, "\(label)")
+                    #expect(abs(v["body"]! - v["bustT"]!) <= 4, "\(label): body \(v["body"]!) for \(v["bustT"]!)")
+                    #expect(abs(v["sleeve"]! - v["armT"]!) <= 2, "\(label): sleeve \(v["sleeve"]!) for \(v["armT"]!)")
+                    #expect(Int(v["D"]!) % 4 == 0 && Int(v["ribRow"]!) % 4 == 2, "\(label): stripes line up")
+                    #expect(Int(v["ribSts"]!) % 2 == 1, "\(label): odd count for 1x1 rib")
+                    #expect(v["lastSleeveDec"]! <= 96, "\(label): sleeve shaping fits the sleeve")
+                    #expect(!r.sections.flatMap(\.lines).contains { $0.contains("{") }, "\(label)")
+                }
+            }
+        }
+    }
+}
