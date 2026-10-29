@@ -131,6 +131,27 @@ The app is ad-hoc signed for now. Once the Apple Developer account is set up,
 `scripts/release.sh` builds, signs with Developer ID, notarizes and staples
 the app (the one-time setup is at the top of the script).
 
+## CI and releases
+
+GitHub Actions runs on every pull request and push to main (`.github/workflows/`):
+
+- **CI**: banned patterns (`as!`, `fatalError(`, `print(`, TODO/FIXME) stay at zero; the test
+  count and line coverage of the KnitCore package may not drop below their floors; the tests
+  run on Apple silicon and Intel; the checked-in Xcode project must list every app source;
+  the universal app is built and its bundle checked.
+- **Ratchets**: after a merge to main, `test-count-ratchet` and `coverage-ratchet` raise
+  `test-count-baseline.txt` and `coverage-baseline.txt` when the numbers climb. Don't bump
+  those files from a branch.
+- **Releases**: push an annotated tag matching `MARKETING_VERSION` in `App/project.yml`
+  (e.g. `git tag -a v0.1.0 -m "Knittany 0.1.0"`), with
+  `DistributionAssets/RELEASE NOTES - Knittany <version>.md` in place. The release workflow
+  tests on both architectures, packages a ZIP and DMG with checksums and an SBOM, attests them,
+  and publishes the GitHub release. Run it by hand for a release candidate.
+
+The same checks run locally: `./scripts/check-coverage.sh`, `./scripts/build-app.sh`,
+`./scripts/package-release.sh` and so on. Tests that need the git-ignored pattern files are
+skipped on CI, so CI's coverage is a little lower than a local run's.
+
 ## Using the app
 
 1. **People**: add the person, choose the women's or men's size chart, and type the body measurements you've taken (inches or cm). Grey values are Craft Yarn Council estimates from that chart, for reference; regrading uses only what you measured.
