@@ -1,0 +1,6 @@
+# Architecture-specific line coverage floors for the KnitCore package, measured on CI.
+# Coverage instrumentation differs between Apple silicon and Intel builds. Raised automatically by
+# .github/workflows/coverage-ratchet.yml on every push to main; don't bump it from a feature
+# branch (see the header of this script). Lower one only deliberately, with a reason in the commit.
+arm64=83.98
+x86_64=83.98
