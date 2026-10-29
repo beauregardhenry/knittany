@@ -5,6 +5,7 @@ import KnitRender
 let usage = """
     knit regrade <pattern.json> --chest <body> [measurements] [options]
     knit check <pattern.json>
+    knit import <pattern.json> [--source-pdf <original.pdf>]   adds it to the app's library
 
     Body measurements (a number is cm; add "in" for inches, e.g. 38in):
       --chest --waist --hip --upper-arm --wrist --arm-length
@@ -56,6 +57,19 @@ do {
 }
 
 switch command {
+case "import":
+    // Adds the pattern (and optionally its original PDF) to the app's library.
+    var pdf: URL?
+    if args.count == 2, args[0] == "--source-pdf" { pdf = URL(fileURLWithPath: args[1]) }
+    do {
+        let store = LibraryStore(root: LibraryStore.defaultRoot)
+        var index = try store.load()
+        let entry = try store.importPattern(from: URL(fileURLWithPath: path), sourcePDF: pdf, into: &index)
+        print("Imported \(entry.name) into \(store.root.path)\(pdf == nil ? "" : ", with its PDF")")
+    } catch {
+        fail("Couldn't import: \(error)")
+    }
+
 case "check":
     do {
         print(try TextReport.designerCheck(pattern))
