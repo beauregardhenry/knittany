@@ -1,0 +1,122 @@
+import Foundation
+import KnitCore
+
+let usage = """
+    knit regrade <pattern.json> --chest <body> [measurements] [options]
+    knit check <pattern.json>
+
+    Body measurements (a number is cm; add "in" for inches, e.g. 38in):
+      --chest --waist --hip --upper-arm --wrist --arm-length
+      --armhole-depth --cross-back
+
+    Options:
+      --ease <dimension>=<length>      e.g. --ease chest=10cm
+      --finished <dimension>=<length>  e.g. --finished bodyLength=70cm
+      --gauge <sts>x<rows>             your gauge per 10 cm, e.g. --gauge 22x30
+      --option <id>=<number>           e.g. --option long=0
+      --units cm|in                    which unit to show first (both are shown)
+
+    Dimensions: \(GarmentMeasure.allCases.map(\.rawValue).joined(separator: ", "))
+    """
+
+func fail(_ message: String) -> Never {
+    FileHandle.standardError.write(Data((message + "\n").utf8))
+    exit(1)
+}
+
+func length(_ text: String) -> Double {
+    guard let v = LengthParser.cm(from: text) else { fail("Not a length: \(text)") }
+    return v
+}
+
+func keyValue(_ text: String) -> (String, String) {
+    let parts = text.split(separator: "=", maxSplits: 1).map(String.init)
+    guard parts.count == 2 else { fail("Expected name=value, got \(text)") }
+    return (parts[0], parts[1])
+}
+
+func dimension(_ name: String) -> GarmentMeasure {
+    guard let d = GarmentMeasure(rawValue: name) else { fail("Unknown dimension \(name)") }
+    return d
+}
+
+var args = Array(CommandLine.arguments.dropFirst())
+guard args.count >= 2 else { fail(usage) }
+let command = args.removeFirst()
+let path = args.removeFirst()
+
+let pattern: Pattern
+do {
+    pattern = try Pattern.load(from: URL(fileURLWithPath: path))
+} catch {
+    fail("Couldn't read \(path): \(error)")
+}
+
+switch command {
+case "check":
+    do {
+        print(try TextReport.designerCheck(pattern))
+    } catch {
+        fail("Check failed: \(error)")
+    }
+
+case "regrade":
+    let bodyFlags: [String: BodyMeasure] = [
+        "--chest": .chest, "--waist": .waist, "--hip": .hip, "--upper-arm": .upperArm,
+        "--wrist": .wrist, "--arm-length": .armLength, "--armhole-depth": .armholeDepth,
+        "--cross-back": .crossBack,
+    ]
+    var body: [BodyMeasure: Double] = [:]
+    var ease: [GarmentMeasure: Double] = [:]
+    var finished: [GarmentMeasure: Double] = [:]
+    var options: [String: Double] = [:]
+    var gauge: Gauge?
+    var units = UnitPreference.cmFirst
+
+    while !args.isEmpty {
+        let flag = args.removeFirst()
+        guard !args.isEmpty else { fail("\(flag) needs a value") }
+        let value = args.removeFirst()
+        if let m = bodyFlags[flag] {
+            body[m] = length(value)
+            continue
+        }
+        switch flag {
+        case "--ease":
+            let (k, v) = keyValue(value)
+            ease[dimension(k)] = length(v)
+        case "--finished":
+            let (k, v) = keyValue(value)
+            finished[dimension(k)] = length(v)
+        case "--option":
+            let (k, v) = keyValue(value)
+            guard let n = Double(v) else { fail("Option \(k) needs a number") }
+            options[k] = n
+        case "--gauge":
+            let parts = value.lowercased().split(separator: "x").compactMap { Double($0) }
+            guard parts.count == 2 else { fail("Gauge looks like 22x30 (stitches x rows per 10 cm)") }
+            gauge = Gauge(stitchesPer10cm: parts[0], rowsPer10cm: parts[1], stitchPattern: pattern.gauge.stitchPattern)
+        case "--units":
+            units = value.hasPrefix("in") ? .inchFirst : .cmFirst
+        default:
+            fail("Unknown flag \(flag)\n\n\(usage)")
+        }
+    }
+
+    do {
+        let fit = try EaseModel.targets(
+            for: pattern, body: body, easeOverrides: ease, finishedOverrides: finished, options: options
+        )
+        var targets: [GarmentMeasure: Double] = [:]
+        for t in fit { targets[t.dimension] = t.finished }
+        let result = try Grader(pattern: pattern).grade(
+            GradeRequest(targets: targets, gauge: gauge, options: options, units: units)
+        )
+        print(TextReport.render(result, fit: fit))
+    } catch {
+        fail("Couldn't regrade: \(error)")
+    }
+
+default:
+    fail(usage)
+}

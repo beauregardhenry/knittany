@@ -1,0 +1,38 @@
+# Generate Knitting.xcodeproj with: xcodegen generate (run in this folder)
+name: Knitting
+options:
+  bundleIdPrefix: com.beauregardhenry
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+packages:
+  KnitCore:
+    path: ../KnitCore
+targets:
+  Knitting:
+    type: application
+    platform: macOS
+    sources: [Sources]
+    dependencies:
+      - package: KnitCore
+        product: KnitCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.beauregardhenry.knitting
+        PRODUCT_NAME: Knitting
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Knitting
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.lifestyle
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        SWIFT_VERSION: "6.0"
+        ENABLE_HARDENED_RUNTIME: YES
+        # Ad-hoc signing until the Apple Developer account exists (phase 6).
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+      configs:
+        Release:
+          # Universal: Intel and Apple Silicon.
+          ARCHS: "$(ARCHS_STANDARD)"
+          ONLY_ACTIVE_ARCH: NO

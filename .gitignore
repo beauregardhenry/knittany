@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.swiftpm/
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+
+# Encoded patterns contain the designers' instructions. This repo is public,
+# so they stay out of git (see README).
+Patterns/

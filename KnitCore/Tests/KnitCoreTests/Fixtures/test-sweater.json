@@ -1,0 +1,41 @@
+{
+  "name": "Test Sweater",
+  "designer": "Made up for tests",
+  "construction": "A minimal made-up pattern that exercises the grader",
+  "sizes": ["S", "M", "L"],
+  "gauge": { "stitchesPer10cm": 20, "rowsPer10cm": 28, "stitchPattern": "stockinette" },
+  "primaryDimension": "chest",
+  "statedEase": { "chest": 10 },
+  "options": [{ "id": "long", "label": "Long version", "default": 1 }],
+  "schematic": [
+    { "id": "c", "label": "Chest", "dimension": "chest", "values": [90, 100, 110], "achieved": "cm(co)" },
+    { "id": "d", "label": "Upper arm", "dimension": "upperArm", "values": [30, 33, 36] },
+    { "id": "b", "label": "Body length", "dimension": "bodyLength", "values": [35, 35, 35], "when": "long" },
+    { "id": "b_short", "label": "Body length", "dimension": "bodyLength", "values": [25, 25, 25], "when": "!long" },
+    { "id": "h", "label": "Hem", "dimension": "hem", "values": [94, 104, 114] }
+  ],
+  "quantities": [
+    { "id": "co", "kind": "stitches", "driver": "chest", "values": [180, 200, 220] },
+    { "id": "sleeve", "kind": "stitches", "driver": "upperArm", "values": [60, 66, 72] },
+    { "id": "bodyLen", "kind": "length", "driver": "bodyLength", "mode": "offset", "values": [33, 33, 33] },
+    { "id": "rib", "kind": "stitches", "formula": "nearestMod(co, 4, 0)", "values": [180, 200, 220] },
+    { "id": "hemExtra", "kind": "count", "formula": "max(0, round((sts(target_h) - sts(base_h)) / 4))", "values": [0, 0, 0] },
+    { "id": "repeats", "kind": "count", "value": 6, "per": "rows" },
+    { "id": "tucks", "kind": "count", "value": 7 }
+  ],
+  "checks": [
+    { "expr": "sleeve >= 50", "message": "The sleeve has only {sleeve} sts." }
+  ],
+  "sections": [
+    {
+      "title": "Body",
+      "lines": [
+        "CO {co} sts.",
+        "{if hemExtra > 0}Increase {hemExtra} times.{end}",
+        "Work until the body measures {bodyLen}.",
+        "Repeat every {repeats:ordinal} row."
+      ]
+    },
+    { "title": "Pocket", "when": "long", "lines": ["Make a pocket."] }
+  ]
+}
