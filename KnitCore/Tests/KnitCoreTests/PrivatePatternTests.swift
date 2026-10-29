@@ -56,3 +56,55 @@ struct DippedArmsTests {
         }
     }
 }
+
+@Suite("Marled Mania (circular yoke)", .enabled(if: PrivatePatterns.exists("marled-mania")))
+struct MarledManiaTests {
+    let pattern: Pattern
+
+    init() throws {
+        pattern = try Pattern.load(from: PrivatePatterns.url("marled-mania"))
+    }
+
+    @Test func matchesTheDesigner() throws {
+        #expect(try DesignerCheck.consistency(pattern).isEmpty)
+        #expect(try DesignerCheck.reproduction(pattern).isEmpty)
+        let missed = try DesignerCheck.leaveOneOut(pattern).filter { $0.kind.isWhole && $0.error != 0 }
+        #expect(missed.isEmpty, "\(missed.map { "\($0.size) \($0.quantity)" })")
+    }
+
+    /// Between sizes the rib width is rounded and the number of ribs adjusts, so
+    /// the yoke still ends at the right width and the neck stays near the designer's.
+    @Test func regradesSmoothlyBetweenSizes() throws {
+        let grader = try Grader(pattern: pattern)
+        var lastYokeEnd = 0.0
+        for finished in stride(from: 70.0, through: 125, by: 1) {
+            let r = try grader.grade(GradeRequest(targets: [.chest: finished]))
+            let v = r.values
+            let w = try #require(v["w"]), n = try #require(v["n"]), f = try #require(v["f"])
+            #expect(w >= 3 && w <= 8)
+            #expect(Int(n) % 2 == 1, "an odd number of ribs keeps the 2x2 rib symmetrical")
+            #expect(abs(2 * n - 166) <= 0.13 * 166, "neck \(2 * n) at \(finished)")
+            #expect(f >= 15)
+            #expect(v["bodyTotal"] == 2 * v["front"]! + v["back"]! + 42)
+            #expect(Int(v["shortTotal"]!) % Int(2 * w) == Int(w), "the shorter body is an odd number of ribs")
+            #expect(Int(v["cuff"]!) % 4 == 0)
+            #expect([1, 2].contains(v["finalDec"]!))
+            let yokeEnd = n * w
+            #expect(yokeEnd >= lastYokeEnd - 2 * w, "yoke end \(yokeEnd) after \(lastYokeEnd) at \(finished)")
+            lastYokeEnd = yokeEnd
+            #expect(!r.warnings.contains { $0.hasPrefix("Internal") }, "\(r.warnings)")
+            let ribbing = r.sections[0].lines.filter { $0.hasSuffix("Ribbing") }
+            #expect(ribbing.count == Int(w) - 1, "one stage per rib width from 2x2 up")
+        }
+    }
+
+    @Test func rendersBothVersions() throws {
+        let grader = try Grader(pattern: pattern)
+        for long in [0.0, 1] {
+            let r = try grader.grade(GradeRequest(targets: [.chest: 100, .yokeDepth: 21], options: ["long": long]))
+            let titles = r.sections.map(\.title)
+            #expect(titles.contains(long == 1 ? "Decrease 1x1 Ribbing" : "Shorter Version"))
+            #expect(!r.sections.flatMap(\.lines).contains { $0.contains("{") })
+        }
+    }
+}

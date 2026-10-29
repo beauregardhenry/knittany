@@ -124,7 +124,7 @@ public enum PDFExporter {
                 case .inferred: "ease inferred from the pattern's sizes"
                 case .knitter: "your ease"
                 }
-                text = "\(t.dimension.label): body \(f.length(b)) + \(f.length(e)) \(easeNote) = \(f.length(t.finished))"
+                text = "\(t.dimension.label): body \(f.length(b)) \(f.plusOrMinus(e)) \(easeNote) = \(f.length(t.finished))"
             case .override:
                 text = "\(t.dimension.label): \(f.length(t.finished)), as chosen"
             case .designerGrading:

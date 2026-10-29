@@ -40,6 +40,18 @@ your gauge differs from the pattern's, stitch and row counts are rescaled.
    designer's numbers (Dipped Arms: 160/189 stitch counts exact, 188 within 2;
    all sleeve-decrease spacings exact).
 
+### Patterns whose structure changes with size
+
+Some designs can't be interpolated number by number. Marled Mania's ribbed
+yoke widens its ribs one stitch at a time (2x2, 3x3, …) until they reach the
+size's rib width w, and every later count is a multiple of w; that's why the
+PDF has "Size 2 only" steps. Its model makes the same design choices a
+designer would: round w to the nearer size, adjust the number of ribs so the
+yoke ends at the right width (the neck changes a little), split the ribs
+between back, sleeves and the drapey fronts from the target measurements, and
+include only the yoke stages that size needs. The designer check reproduces
+all three sizes exactly and gets the middle size exactly when it's hidden.
+
 ## Importing a pattern PDF
 
 A PDF is read into a *draft* that the knitter checks before it's saved:
@@ -109,7 +121,7 @@ holds a made-up pattern that is safe to publish.
 1. ✅ Engine, Dipped Arms, designer check, text output
 2. ✅ Mac app: people and measurements, pattern library, projects, schematic and chart drawings, PDF export
 3. ✅ PDF import: offline (default) and with Claude (optional), with a check-and-correct screen
-4. Circular yoke (Marled Mania)
+4. ✅ Circular yoke (Marled Mania)
 5. Raglan and set-in sleeves, then other top-down constructions
 6. Signing and notarization
 7. Bottom-up and seamed sweaters

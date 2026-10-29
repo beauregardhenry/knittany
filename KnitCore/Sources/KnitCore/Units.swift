@@ -24,6 +24,11 @@ public struct MeasureFormatter: Sendable {
     }
 
     /// Yarn amounts are stored in metres.
+    /// "+ 10 cm / 4″" or "− 16 cm / 6.25″", for adding ease to a body measurement.
+    public func plusOrMinus(_ cm: Double) -> String {
+        cm < 0 ? "− " + length(-cm) : "+ " + length(cm)
+    }
+
     public func yarn(_ metres: Double) -> String {
         let m = "\(Int(metres.rounded())) m"
         let yd = "\(Int((metres / 0.9144).rounded())) yd"

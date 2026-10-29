@@ -20,7 +20,7 @@ public enum TextReport {
                 case .inferred: "ease inferred from the pattern's sizes"
                 case .knitter: "your ease"
                 }
-                out.append("  \(t.dimension.label): body \(f.length(body)) + \(f.length(ease)) (\(easeNote)) = \(f.length(t.finished))")
+                out.append("  \(t.dimension.label): body \(f.length(body)) \(f.plusOrMinus(ease)) (\(easeNote)) = \(f.length(t.finished))")
             case .override:
                 out.append("  \(t.dimension.label): \(f.length(t.finished)) (your choice)")
             case .designerGrading:
