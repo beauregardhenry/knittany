@@ -121,6 +121,24 @@ struct ExportTests {
         let text = (0..<doc.pageCount).compactMap { doc.page(at: $0)?.string }.joined()
         #expect(text.components(separatedBy: "Knit a very long row").count - 1 == 400)
     }
+
+    @Test func largePrintUsesBiggerTextAndMorePages() throws {
+        var (result, plan) = try gradedFixture(chart: false)
+        result.sections = [RenderedSection(title: "Long", lines: Array(repeating: "Knit a very long row of stitches.", count: 300))]
+        let standard = try #require(PDFDocument(data: try PDFExporter.export(result, plan: plan)))
+        let large = try #require(PDFDocument(data: try PDFExporter.export(result, plan: plan, options: .init(textScale: 1.6))))
+        #expect(large.pageCount > standard.pageCount)
+        func instructionFontSize(_ doc: PDFDocument) -> CGFloat? {
+            let page = doc.page(at: doc.pageCount - 1)!
+            let text = page.attributedString
+            return (text?.attribute(.font, at: 0, effectiveRange: nil) as? NSFont)?.pointSize
+        }
+        let s = try #require(instructionFontSize(standard)), l = try #require(instructionFontSize(large))
+        #expect(abs(l / s - 1.6) < 0.05, "standard \(s) pt, large \(l) pt")
+        // The text is all still there.
+        let text = (0..<large.pageCount).compactMap { large.page(at: $0)?.string }.joined()
+        #expect(text.components(separatedBy: "Knit a very long row").count - 1 == 300)
+    }
 }
 
 @Suite("Schematic shapes and knitting progress")

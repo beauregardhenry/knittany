@@ -158,7 +158,8 @@ skipped on CI, so CI's coverage is a little lower than a local run's.
 2. **Patterns**: **Import Pattern…** (⌘I) a PDF, or open a PDF with Knittany, and check the draft before saving. Pattern files (`.json`) import directly; attach the original PDF so its chart pages are included.
 3. **New Project** (on the pattern): pick the person and version. If the pattern doesn't state its ease, enter the ease you want under Ease. The right side shows the regraded pattern exactly as it exports. Adjust ease, type a finished measurement to change it (a longer body, say), or enter your swatch gauge. **Export PDF…** saves it.
 
-4. **Knit**: switch the project to Knit for a checklist of every step, with the next step highlighted and a row counter (`-` and `=` keys). Progress is saved with the project.
+4. **Text size**: Knittany > Settings, or View > Bigger Text (⌘=) and Smaller Text (⌘−), makes the text Large or Extra Large throughout the app, in Knit mode and in exported PDFs.
+5. **Knit**: switch the project to Knit for a checklist of every step, with the next step highlighted and a row counter (`-` and `=` keys). Progress is saved with the project.
 
 Everything is kept as plain files in `~/Library/Application Support/Knittany/` (backed up by Time Machine). Deleted patterns go to the Trash.
 

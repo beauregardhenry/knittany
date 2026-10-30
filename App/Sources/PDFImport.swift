@@ -84,7 +84,7 @@ struct PDFImportSheet: View {
             case .reading(let method):
                 VStack(spacing: 14) {
                     ProgressView()
-                    Text(method == .claude ? "Claude is reading \(session.fileName)…" : "Reading \(session.fileName)…").font(.headline)
+                    Text(method == .claude ? "Claude is reading \(session.fileName)…" : "Reading \(session.fileName)…").scaledFont(.headline)
                     if method == .claude {
                         Text(session.received == 0 ? "This usually takes a minute or two." : "\(session.received.formatted()) characters received")
                             .foregroundStyle(.secondary).monospacedDigit()
@@ -103,7 +103,7 @@ struct PDFImportSheet: View {
                 }
             case .failed(let message):
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Couldn't read \(session.fileName)", systemImage: "exclamationmark.triangle.fill").font(.headline)
+                    Label("Couldn't read \(session.fileName)", systemImage: "exclamationmark.triangle.fill").scaledFont(.headline)
                     ScrollView { Text(message).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading) }
                         .frame(maxHeight: 160)
                     HStack {
@@ -121,7 +121,7 @@ struct PDFImportSheet: View {
     var chooser: some View {
         let hasKey = APIKeyStore.hasKey
         return VStack(alignment: .leading, spacing: 16) {
-            Text("Import \(session.fileName)").font(.headline)
+            Text("Import \(session.fileName)").scaledFont(.headline)
             Text("The pattern is read into a draft: its sizes, gauge, finished measurements, and every number that changes with size. You check and correct the draft before it's saved.")
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -131,7 +131,7 @@ struct PDFImportSheet: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Read on this Mac").bold()
                             Text("Nothing leaves your computer. Works best with text PDFs laid out like most patterns.")
-                                .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                                .scaledFont(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer()
                         Button("Read") { session.read(.offline) }.keyboardShortcut(.defaultAction)
@@ -143,7 +143,7 @@ struct PDFImportSheet: View {
                             Text(hasKey
                                  ? "Sends the PDF to Anthropic. Better with unusual layouts, size tables and schematics."
                                  : "Add an Anthropic API key in Settings (⌘,) to use this.")
-                                .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                                .scaledFont(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         Spacer()
                         Button("Read with Claude") { session.read(.claude) }.disabled(!hasKey)

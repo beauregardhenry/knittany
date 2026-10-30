@@ -113,7 +113,7 @@ struct ImportReviewView: View {
         } header: {
             Text("Sizes and gauge")
         } footer: {
-            Text("Size names in order, separated by commas.").font(.caption).foregroundStyle(.secondary)
+            Text("Size names in order, separated by commas.").scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -147,7 +147,7 @@ struct ImportReviewView: View {
             Text("Finished measurements")
         } footer: {
             Text("Per size, in cm. Choose which garment measurement each one is; the chest picks the size. Stitch counts follow these when you regrade.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -162,7 +162,7 @@ struct ImportReviewView: View {
                 if showUnused || used.contains(n.id) {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            Text("{\(n.id)}").font(.body.monospaced()).bold()
+                            Text("{\(n.id)}").scaledFont(.body, monospaced: true).bold()
                             Spacer()
                             Picker("Kind", selection: $n.kind) {
                                 Text("Stitches").tag(QuantityKind.stitches)
@@ -181,7 +181,7 @@ struct ImportReviewView: View {
                             }
                             .labelsHidden().frame(width: 190)
                         }
-                        Text(n.context).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                        Text(n.context).scaledFont(.caption).foregroundStyle(.secondary).lineLimit(2)
                         ValuesField(values: $n.values, sizes: draft.sizes, unit: unit(n.kind))
                     }
                 }
@@ -190,7 +190,7 @@ struct ImportReviewView: View {
             Text("Numbers that change with size (\(used.count))")
         } footer: {
             Text("Each number is regraded along the measurement it follows: body stitches follow the chest, sleeve stitches the upper arm, lengths the body or sleeve length.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -215,13 +215,13 @@ struct ImportReviewView: View {
                         get: { s.lines.joined(separator: "\n") },
                         set: { s.lines = $0.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty } }
                     ))
-                    .font(.callout)
+                    .scaledFont(.callout)
                     .frame(minHeight: 120, idealHeight: CGFloat(min(400, 22 * s.lines.count)))
                 } label: {
                     HStack {
                         Toggle("Include", isOn: $s.include).labelsHidden()
                         TextField("Title", text: $s.title).labelsHidden()
-                        Text("\(s.lines.count) lines").font(.caption).foregroundStyle(.secondary)
+                        Text("\(s.lines.count) lines").scaledFont(.caption).foregroundStyle(.secondary)
                     }
                 }
             }
@@ -229,7 +229,7 @@ struct ImportReviewView: View {
             Text("Instructions")
         } footer: {
             Text("One step per line. {name} is a number from the list above, {name:len} a length printed in cm and inches. Lines starting with ## are sub-headings. Untick sections that aren't knitting steps.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -253,7 +253,7 @@ struct ImportReviewView: View {
             Text("Original pages to include")
         } footer: {
             Text("Charts and other pages that don't change with size are printed from the original PDF at the end of the regraded pattern.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 }
@@ -270,15 +270,15 @@ struct ValuesField: View {
         HStack {
             TextField("Values", text: $text, prompt: Text(sizes.joined(separator: ", ")))
                 .labelsHidden()
-                .font(.callout.monospacedDigit())
+                .scaledFont(.callout).monospacedDigit()
                 .focused($focused)
                 .onSubmit(commit)
                 .onChange(of: focused) { if !focused { commit() } }
                 .onAppear(perform: load)
                 .onChange(of: values) { if !focused { load() } }
-            if !unit.isEmpty { Text(unit).font(.caption).foregroundStyle(.secondary) }
+            if !unit.isEmpty { Text(unit).scaledFont(.caption).foregroundStyle(.secondary) }
             if values.count != sizes.count {
-                Text("\(values.count) of \(sizes.count)").font(.caption).foregroundStyle(.red)
+                Text("\(values.count) of \(sizes.count)").scaledFont(.caption).foregroundStyle(.red)
             }
         }
     }

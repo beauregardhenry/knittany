@@ -40,7 +40,7 @@ struct KnitView: View {
                     LazyVStack(alignment: .leading, spacing: 2) {
                         ForEach(result.sections.map(\.title).uniqued(), id: \.self) { title in
                             Text(title.uppercased())
-                                .font(.headline)
+                                .scaledFont(.headline)
                                 .padding(.top, 18)
                                 .padding(.bottom, 4)
                             ForEach(all.filter { $0.section == title }) { step in
@@ -61,7 +61,7 @@ struct KnitView: View {
     @ViewBuilder
     func row(_ step: Step, isNext: Bool) -> some View {
         if step.heading {
-            Text(step.text).font(.subheadline.bold()).padding(.top, 8)
+            Text(step.text).scaledFont(.subheadline, bold: true).padding(.top, 8)
         } else {
             let done = progress.done.contains(step.id)
             Button {
@@ -88,7 +88,7 @@ struct KnitView: View {
     func counterBar(done: Int, of total: Int, jump: @escaping () -> Void) -> some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(done) of \(total) steps done").font(.callout).fixedSize()
+                Text("\(done) of \(total) steps done").scaledFont(.callout).fixedSize()
                 ProgressView(value: Double(done), total: Double(max(total, 1))).frame(width: 160)
             }
             Button("Go to Next Step", systemImage: "arrow.down.to.line", action: jump).fixedSize()
@@ -98,13 +98,13 @@ struct KnitView: View {
                 .labelStyle(.iconOnly)
                 .keyboardShortcut("-", modifiers: [])
             Text("\(progress.counter)")
-                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                .scaledFont(.counter)
                 .monospacedDigit()
                 .frame(minWidth: 56)
             Button("Next Row", systemImage: "plus") { progress.counter += 1 }
                 .labelStyle(.iconOnly)
                 .keyboardShortcut("=", modifiers: [])
-            Button("Reset") { progress.counter = 0 }
+            Button("Reset") { progress.counter = 0 }.fixedSize()
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)

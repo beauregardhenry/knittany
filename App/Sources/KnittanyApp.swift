@@ -8,12 +8,14 @@ struct KnittanyApp: App {
         WindowGroup("Knittany") {
             RootView()
                 .environment(model)
+                .scaledWindow()
                 .frame(minWidth: 1000, minHeight: 640)
                 // A PDF opened with the app goes to the open window, not a new one.
                 .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
         }
         .handlesExternalEvents(matching: ["*"])
         .commands {
+            TextSizeCommands()
             CommandGroup(replacing: .newItem) {
                 Button("New Person") { model.addPerson() }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
@@ -26,6 +28,7 @@ struct KnittanyApp: App {
 
         Settings {
             SettingsView()
+                .scaledWindow()
         }
     }
 }

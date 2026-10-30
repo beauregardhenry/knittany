@@ -40,7 +40,7 @@ struct PersonView: View {
                         + "anything else follows the designer's grading. Height is kept for reference only, because it "
                         + "doesn't reliably predict body or arm lengths."
                 )
-                .font(.caption)
+                .scaledFont(.caption)
                 .foregroundStyle(.secondary)
             }
 
@@ -74,10 +74,10 @@ struct PersonView: View {
             Spacer()
             if person.measurements[m] == nil, let e = estimate {
                 Text("≈ \(LengthText.both(e, person.units)) (estimate)")
-                    .font(.callout)
+                    .scaledFont(.callout)
                     .foregroundStyle(.secondary)
             } else if let v = person.measurements[m] {
-                Text(LengthText.both(v, person.units)).font(.callout).foregroundStyle(.secondary)
+                Text(LengthText.both(v, person.units)).scaledFont(.callout).foregroundStyle(.secondary)
             }
             LengthField(title: m.label, cm: binding, units: person.units, prompt: person.units == .inchFirst ? "in" : "cm")
                 .labelsHidden()

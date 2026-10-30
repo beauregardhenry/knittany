@@ -11,8 +11,11 @@ enum Ink {
     static let fill = CGColor(gray: 0.96, alpha: 1)
     static let accent = CGColor(red: 0.62, green: 0.16, blue: 0.20, alpha: 1)
 
+    /// Multiplies every text size while a large-print PDF is being drawn.
+    @TaskLocal static var textScale: CGFloat = 1
+
     static func font(_ size: CGFloat, bold: Bool = false) -> NSFont {
-        bold ? .boldSystemFont(ofSize: size) : .systemFont(ofSize: size)
+        bold ? .boldSystemFont(ofSize: size * textScale) : .systemFont(ofSize: size * textScale)
     }
 
     static func color(hex: String?) -> CGColor? {
@@ -44,7 +47,7 @@ enum Ink {
         case .center: point.x - bounds.width / 2
         case .right: point.x - bounds.width
         }
-        let baseline = point.y + size * 0.35
+        let baseline = point.y + size * textScale * 0.35
         ctx.saveGState()
         ctx.textMatrix = CGAffineTransform(scaleX: 1, y: -1)
         ctx.textPosition = CGPoint(x: x, y: baseline)
