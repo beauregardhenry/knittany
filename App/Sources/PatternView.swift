@@ -65,8 +65,8 @@ struct PatternView: View {
                             }
                         }
                     }
-                    .font(.callout)
-                    Text(inches ? "inches" : "cm").font(.caption).foregroundStyle(.secondary)
+                    .scaledFont(.callout)
+                    Text(inches ? "inches" : "cm").scaledFont(.caption).foregroundStyle(.secondary)
                 }
 
                 Section {

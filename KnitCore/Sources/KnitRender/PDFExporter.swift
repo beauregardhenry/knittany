@@ -11,11 +11,14 @@ public enum PDFExporter {
         public var personName: String?
         /// The original pattern PDF, for `sourcePages`.
         public var sourcePDF: URL?
+        /// 1 for the standard size; more for large print.
+        public var textScale: CGFloat
 
-        public init(pageSize: CGSize = PDFExporter.defaultPageSize, personName: String? = nil, sourcePDF: URL? = nil) {
+        public init(pageSize: CGSize = PDFExporter.defaultPageSize, personName: String? = nil, sourcePDF: URL? = nil, textScale: CGFloat = 1) {
             self.pageSize = pageSize
             self.personName = personName
             self.sourcePDF = sourcePDF
+            self.textScale = textScale
         }
     }
 
@@ -27,6 +30,12 @@ public enum PDFExporter {
     }
 
     public static func export(_ result: GradeResult, plan: FitPlan, options: Options = Options()) throws -> Data {
+        try Ink.$textScale.withValue(options.textScale) {
+            try draw(result, plan: plan, options: options)
+        }
+    }
+
+    static func draw(_ result: GradeResult, plan: FitPlan, options: Options) throws -> Data {
         let data = NSMutableData()
         var mediaBox = CGRect(origin: .zero, size: options.pageSize)
         guard let consumer = CGDataConsumer(data: data as CFMutableData),

@@ -14,6 +14,7 @@ struct ProjectView: View {
     @State private var exporting = false
     @State private var gaugePerInches = Locale.current.measurementSystem == .us
     @State private var mode = Mode.pattern
+    @AppStorage(TextSize.key) private var textSize = TextSize.standard
 
     enum Mode { case pattern, knit }
 
@@ -37,6 +38,11 @@ struct ProjectView: View {
     }
 
     var regradeInputs: RegradeInputs { RegradeInputs(project) }
+
+    struct RegradeKey: Equatable {
+        var inputs: RegradeInputs
+        var textSize: TextSize
+    }
     var person: Person? { model.person(project.personID) }
 
     var body: some View {
@@ -69,7 +75,7 @@ struct ProjectView: View {
             }
         }
         .onChange(of: project) { model.update(project) }
-        .task(id: regradeInputs) {
+        .task(id: RegradeKey(inputs: regradeInputs, textSize: textSize)) {
             try? await Task.sleep(for: .milliseconds(200))
             guard !Task.isCancelled else { return }
             regenerate()
@@ -94,7 +100,7 @@ struct ProjectView: View {
         do {
             let (result, plan) = try project.regrade(pattern: pattern, person: person)
             let pdf = try PDFExporter.export(result, plan: plan, options: .init(
-                personName: person?.name, sourcePDF: model.sourcePDF(project.patternID)
+                personName: person?.name, sourcePDF: model.sourcePDF(project.patternID), textScale: textSize.pdfScale
             ))
             output = Output(result: result, plan: plan, pdf: pdf)
             problem = nil
@@ -176,12 +182,12 @@ struct ProjectView: View {
                     }
                     if let sizes = pattern.schematic.first(where: { $0.dimension == d }) {
                         Text("The pattern doesn't say how much ease it has. Its finished \(d.label.lowercased()) is \(sizes.values.map { LengthText.format($0, project.units) }.joined(separator: ", ")) for sizes \(pattern.sizes.joined(separator: ", ")); compare with \(person?.name ?? "the wearer")'s measurement.")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .scaledFont(.caption).foregroundStyle(.secondary)
                     }
                 }
             }
             if let output {
-                Text("Closest published sizes: \(output.result.position).").font(.callout)
+                Text("Closest published sizes: \(output.result.position).").scaledFont(.callout)
                 ForEach(Array(output.plan.targets.enumerated()), id: \.offset) { _, t in
                     fitRow(t)
                 }
@@ -189,7 +195,7 @@ struct ProjectView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(d.label)
-                            Text("measured, but the pattern's ease isn't known").font(.caption).foregroundStyle(.secondary)
+                            Text("measured, but the pattern's ease isn't known").scaledFont(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         LengthField(
@@ -206,7 +212,7 @@ struct ProjectView: View {
             Text("Ease")
         } footer: {
             Text("Ease is the difference between the body and the finished garment. Leave a field empty to use the designer's ease, or the ease worked out from the pattern's sizes.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -233,7 +239,7 @@ struct ProjectView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(t.dimension.label)
                     Text("body \(LengthText.both(body, units)) → \(LengthText.both(t.finished, units))")
-                        .font(.caption).foregroundStyle(.secondary)
+                        .scaledFont(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
                 LengthField(
@@ -270,7 +276,7 @@ struct ProjectView: View {
             Text("Changes")
         } footer: {
             Text("Type a finished measurement to change it, e.g. a longer body. The grey value is what you get now.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -308,7 +314,7 @@ struct ProjectView: View {
             Text("Gauge")
         } footer: {
             Text("Pattern gauge: \(pattern.map { MeasureFormatter(preference: project.units).gauge($0.gauge) } ?? "–"). Measure a washed and blocked swatch.")
-                .font(.caption).foregroundStyle(.secondary)
+                .scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -322,7 +328,7 @@ struct ProjectView: View {
                 if !output.result.warnings.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
                         Label("Check before knitting", systemImage: "exclamationmark.triangle.fill").bold()
-                        ForEach(output.result.warnings, id: \.self) { Text("• \($0)").font(.callout) }
+                        ForEach(output.result.warnings, id: \.self) { Text("• \($0)").scaledFont(.callout) }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)

@@ -19,6 +19,7 @@ struct DesignView: View {
     @State private var previewFor: PreviewTarget = .size(2)
     @State private var pdf: Data?
     @State private var problem: String?
+    @AppStorage(TextSize.key) private var textSize = TextSize.standard
 
     enum PreviewTarget: Hashable {
         case size(Int)
@@ -36,7 +37,7 @@ struct DesignView: View {
             Divider()
             HStack {
                 Text("Drawn for the \(session.choices.sizeChart.label.lowercased()) standard sizes \(session.choices.sizeChart.sizes.first!)–\(session.choices.sizeChart.sizes.last!); a project regrades it to anyone's measurements.")
-                    .font(.caption).foregroundStyle(.secondary)
+                    .scaledFont(.caption).foregroundStyle(.secondary)
                 Spacer()
                 Button("Cancel", role: .cancel) { dismiss() }.keyboardShortcut(.cancelAction)
                 Button(session.patternID == nil ? "Save Pattern" : "Save Changes") { save() }
@@ -46,7 +47,7 @@ struct DesignView: View {
             .padding(12)
         }
         .frame(minWidth: 960, idealWidth: 1180, minHeight: 560, idealHeight: 820)
-        .task(id: PreviewKey(choices: session.choices, target: previewFor, people: model.index.people)) {
+        .task(id: PreviewKey(textSize: textSize, choices: session.choices, target: previewFor, people: model.index.people)) {
             try? await Task.sleep(for: .milliseconds(150))
             guard !Task.isCancelled else { return }
             render()
@@ -54,6 +55,7 @@ struct DesignView: View {
     }
 
     struct PreviewKey: Equatable {
+        var textSize: TextSize
         var choices: DesignChoices
         var target: PreviewTarget
         var people: [Person]
@@ -88,7 +90,7 @@ struct DesignView: View {
                 Text("Sweater")
             } footer: {
                 Text("Sizes follow the Craft Yarn Council's women's or men's chart. Both constructions are knitted top-down in one piece, so there's no sewing. A raglan has four diagonal lines from the neck to the underarms; a round yoke grows in a circle, which suits colourwork and stripes.")
-                    .font(.caption).foregroundStyle(.secondary)
+                    .scaledFont(.caption).foregroundStyle(.secondary)
             }
 
             Section("Fit and length") {
@@ -150,7 +152,7 @@ struct DesignView: View {
                 Text("Gauge in stockinette, per 10 cm / 4″")
             } footer: {
                 Text("From a washed and blocked swatch in the yarn you'll use. Every number in the pattern is worked out from it.")
-                    .font(.caption).foregroundStyle(.secondary)
+                    .scaledFont(.caption).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -213,7 +215,7 @@ struct DesignView: View {
                 (result, plan) = try project.regrade(pattern: pattern, person: person)
                 name = person.name
             }
-            pdf = try PDFExporter.export(result, plan: plan, options: .init(personName: name))
+            pdf = try PDFExporter.export(result, plan: plan, options: .init(personName: name, textScale: textSize.pdfScale))
             problem = nil
         } catch {
             problem = "\(error)"
