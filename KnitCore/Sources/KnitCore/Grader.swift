@@ -68,13 +68,23 @@ public struct Grader {
     public func grade(_ request: GradeRequest) throws -> GradeResult {
         let options = pattern.defaultOptions.merging(request.options) { _, new in new }
         let active = try activeSchematic(options: options)
-        guard let primaryEntry = active.first(where: { $0.dimension == pattern.primaryDimension }) else {
+        let oneSize = pattern.sizes.count == 1
+        let primaryEntry = active.first(where: { $0.dimension == pattern.primaryDimension })
+        guard primaryEntry != nil || oneSize else {
             throw PatternError("no active \(pattern.primaryDimension.rawValue) measurement")
         }
-        guard let primaryTarget = request.targets[pattern.primaryDimension] else {
+        // A one-size pattern is knitted as written unless a measurement is given.
+        let primaryXs = primaryEntry?.values ?? [0]
+        guard let primaryTarget = request.targets[pattern.primaryDimension] ?? (oneSize ? primaryXs[0] : nil) else {
             throw PatternError("a finished \(pattern.primaryDimension.label.lowercased()) measurement is required")
         }
-        let primaryXs = primaryEntry.values
+
+        /// Follows the designer's sizes. With only one size there's nothing to interpolate
+        /// between, so a count grows in proportion to the measurement it follows.
+        func follow(_ xs: [Double], _ ys: [Double], _ x: Double) -> Double {
+            if xs.count == 1, xs[0] > 0, let y = ys.first { return y * x / xs[0] }
+            return Interpolation.at(xs: xs, ys: ys, x: x)
+        }
 
         var base: [String: Double] = [:]
         var target: [String: Double] = [:]
@@ -113,10 +123,10 @@ public struct Grader {
                     default: raw += delta
                     }
                 } else {
-                    raw = Interpolation.at(xs: e.values, ys: ys, x: t)
+                    raw = follow(e.values, ys, t)
                 }
             } else {
-                raw = Interpolation.at(xs: primaryXs, ys: ys, x: primaryTarget)
+                raw = follow(primaryXs, ys, primaryTarget)
             }
             switch (q.kind, q.per) {
             case (_, .stitches), (.stitches, nil): raw *= stitchRatio
@@ -132,7 +142,7 @@ public struct Grader {
         }
 
         var warnings = evaluator.notes
-        warnings += extrapolationWarnings(active: active, target: target)
+        if !oneSize { warnings += extrapolationWarnings(active: active, target: target) }
         for check in pattern.checks ?? [] {
             if let w = check.when, try evaluator.condition(w) == false { continue }
             if try evaluator.condition(check.expr) == false {
@@ -238,6 +248,10 @@ public struct Grader {
 
     func describePosition(_ x: Double, xs: [Double]) -> String {
         let fmt = MeasureFormatter()
+        if pattern.sizes.count == 1 {
+            guard let x0 = xs.first, x0 > 0, abs(x - x0) >= 0.01 else { return "the pattern's one size, as written" }
+            return "the pattern's one size, scaled from \(fmt.length(x0)) to \(fmt.length(x))"
+        }
         let pairs = zip(pattern.sizes, xs).sorted { $0.1 < $1.1 }
         if let exact = pairs.first(where: { abs($0.1 - x) < 0.01 }) { return "matches size \(exact.0)" }
         guard let first = pairs.first, let last = pairs.last else { return "" }

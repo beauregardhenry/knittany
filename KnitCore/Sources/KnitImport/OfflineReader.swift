@@ -56,8 +56,10 @@ struct Reader {
         sizeNames = sizes
         let gauge = findGauge()
         let measurements = findMeasurements()
-        if !measurements.contains(where: { $0.dimension == .chest }) {
-            notes.append("No finished chest measurement was found. Add it under Finished measurements; it picks the size.")
+        if sizes.count == 1 && !measurements.contains(where: { $0.dimension != nil }) {
+            notes.append("This pattern comes in one size and doesn't give its finished measurements, so it will be knitted as written. Match its gauge, or enter yours in a project to rescale the stitch counts.")
+        } else if !measurements.contains(where: { $0.dimension == .chest }) {
+            notes.append("No finished chest measurement was found. If this is a sweater, add it under Finished measurements; for a hat, hood or cowl, add the head or neck measurement instead and choose it to pick the size.")
         }
         var numbers = NumberTable(measurements: measurements)
         let sections = buildSections(numbers: &numbers)

@@ -15,8 +15,8 @@ public enum DraftBuilder {
         if n == 0 { out.append("Add at least one size.") }
         if draft.name.trimmingCharacters(in: .whitespaces).isEmpty { out.append("Give the pattern a name.") }
         if draft.gauge.stitchesPer10cm <= 0 || draft.gauge.rowsPer10cm <= 0 { out.append("Enter the pattern's gauge.") }
-        if !draft.measurements.contains(where: { $0.dimension == .chest }) {
-            out.append("Add the finished chest measurement for each size; it picks the size to regrade from.")
+        if draft.sizeMeasure == nil && (n > 1 || draft.measurements.contains { $0.dimension != nil }) {
+            out.append("Add a finished measurement for each size and choose which one picks the size: the chest for a sweater, the head for a hat or hood, the neck opening for a cowl.")
         }
         for m in draft.measurements where m.dimension != nil && m.values.count != n {
             out.append("\(m.label) has \(m.values.count) values for \(n) sizes.")
@@ -84,8 +84,8 @@ public enum DraftBuilder {
                 stitchesPer10cm: g.stitchesPer10cm, rowsPer10cm: g.rowsPer10cm,
                 stitchPattern: g.stitchPattern.isEmpty ? nil : g.stitchPattern, needle: g.needle.isEmpty ? nil : g.needle
             ),
-            primaryDimension: .chest,
-            statedEase: draft.chestEase.map { [.chest: $0] },
+            primaryDimension: draft.sizeMeasure ?? .chest,
+            statedEase: draft.chestEase.flatMap { e in draft.sizeMeasure.map { [$0: e] } },
             options: nil,
             schematic: schematic,
             quantities: quantities,
@@ -97,8 +97,13 @@ public enum DraftBuilder {
         try pattern.validate()
         // Make sure every line renders for every published size before saving.
         let grader = try Grader(pattern: pattern)
-        for chest in schematic.first(where: { $0.dimension == .chest })?.values ?? [] {
-            _ = try grader.grade(GradeRequest(targets: [.chest: chest]))
+        let primary = pattern.primaryDimension
+        let checks = schematic.first(where: { $0.dimension == primary })?.values ?? []
+        if checks.isEmpty {
+            _ = try grader.grade(GradeRequest(targets: [:]))
+        }
+        for value in checks {
+            _ = try grader.grade(GradeRequest(targets: [primary: value]))
         }
         return pattern
     }

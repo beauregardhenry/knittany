@@ -106,7 +106,16 @@ struct ImportReviewView: View {
             }
             TextField("Stitch pattern", text: $draft.gauge.stitchPattern)
             TextField("Needle", text: $draft.gauge.needle)
-            LabeledContent("Designer's chest ease") {
+            let dims = draft.measurements.compactMap(\.dimension)
+            if !dims.isEmpty {
+                Picker("Size picked by", selection: Binding(get: { draft.sizeMeasure }, set: { draft.primary = $0 })) {
+                    Text("Choose…").tag(GarmentMeasure?.none)
+                    ForEach(Array(Set(dims)).sorted { $0.label < $1.label }, id: \.self) { Text($0.label).tag(GarmentMeasure?.some($0)) }
+                }
+            } else if draft.sizes.count == 1 {
+                LabeledContent("Size picked by", value: "nothing: one size, knitted as written")
+            }
+            LabeledContent("Designer's ease at the \((draft.sizeMeasure ?? .chest).label.lowercased())") {
                 LengthField(title: "Ease", cm: $draft.chestEase, units: .cmFirst, prompt: "none given")
                     .labelsHidden().frame(width: 140)
             }

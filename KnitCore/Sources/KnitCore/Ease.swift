@@ -63,10 +63,17 @@ public enum EaseModel {
     ) throws -> FitPlan {
         let grader = try Grader(pattern: pattern)
         let active = try grader.activeSchematic(options: pattern.defaultOptions.merging(options) { _, new in new })
-        guard let chestEntry = active.first(where: { $0.dimension == pattern.primaryDimension }) else {
-            throw PatternError("no active \(pattern.primaryDimension.rawValue) measurement")
-        }
         let primary = pattern.primaryDimension
+        let asWritten = FitPlan(notes: [
+            "This pattern comes in one size, so it's knitted as written. Match the pattern's gauge, or enter yours to rescale the stitch counts.",
+        ])
+        guard let chestEntry = active.first(where: { $0.dimension == primary }) else {
+            if pattern.sizes.count == 1 && finishedOverrides.isEmpty { return asWritten }
+            throw PatternError("no active \(primary.rawValue) measurement")
+        }
+        if pattern.sizes.count == 1, finishedOverrides[primary] == nil, primary.bodyMeasure.flatMap({ body[$0] }) == nil {
+            return asWritten
+        }
         var out: [FitTarget] = []
         var notes: [String] = []
 
@@ -107,7 +114,7 @@ public enum EaseModel {
                 (ease, source) = (e, .knitter)
             } else if let e = pattern.statedEase?[d] {
                 (ease, source) = (e, .designer)
-            } else {
+            } else if primary == .chest {
                 let perSize = zip(entry.values, bodyChests).compactMap { finished, chest in
                     chart.estimate(bm, chest: chest).map { finished - $0 }
                 }
@@ -121,6 +128,11 @@ public enum EaseModel {
                 }
                 ease = Interpolation.at(xs: chestEntry.values, ys: perSize, x: chestFinished)
                 source = .inferred
+            } else {
+                // The standard charts relate everything to the chest, so ease can only be
+                // inferred for a pattern sized by its chest.
+                notes.append("Enter the \(d.label.lowercased()) ease you want to use \(bm.label.lowercased()); until then it follows the designer's grading.")
+                continue
             }
             out.append(FitTarget(dimension: d, finished: b + ease, source: .bodyPlusEase(body: b, ease: ease, easeFrom: source)))
         }
