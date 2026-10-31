@@ -144,6 +144,9 @@ struct DesignView: View {
                     ))
                     .labelsHidden().frame(width: 70)
                 }
+                ForEach(session.choices.gauge.problems, id: \.self) {
+                    Label($0, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange).scaledFont(.callout)
+                }
                 TextField("Needle", text: Binding(
                     get: { session.choices.gauge.needle ?? "" },
                     set: { session.choices.gauge.needle = $0.isEmpty ? nil : $0 }

@@ -93,16 +93,16 @@ struct ImportReviewView: View {
                 get: { draft.sizes.joined(separator: ", ") },
                 set: { draft.sizes = $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty } }
             ))
-            LabeledContent("Gauge per 10 cm / 4 in") {
-                HStack {
-                    NumberField(title: "Stitches", value: Binding(get: { draft.gauge.stitchesPer10cm }, set: { draft.gauge.stitchesPer10cm = $0 ?? 0 }))
-                        .frame(width: 60)
-                    Text("sts ×")
-                    NumberField(title: "Rows", value: Binding(get: { draft.gauge.rowsPer10cm }, set: { draft.gauge.rowsPer10cm = $0 ?? 0 }))
-                        .frame(width: 60)
-                    Text("rows")
-                }
-                .labelsHidden()
+            LabeledContent("Stitches in 10 cm / 4 in") {
+                NumberField(title: "Stitches", value: Binding(get: { draft.gauge.stitchesPer10cm }, set: { draft.gauge.stitchesPer10cm = $0 ?? 0 }))
+                    .labelsHidden().frame(width: 70)
+            }
+            LabeledContent("Rows in 10 cm / 4 in") {
+                NumberField(title: "Rows", value: Binding(get: { draft.gauge.rowsPer10cm }, set: { draft.gauge.rowsPer10cm = $0 ?? 0 }))
+                    .labelsHidden().frame(width: 70)
+            }
+            ForEach(Gauge.problems(stitchesPer10cm: draft.gauge.stitchesPer10cm, rowsPer10cm: draft.gauge.rowsPer10cm), id: \.self) {
+                Label($0, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange).scaledFont(.callout)
             }
             TextField("Stitch pattern", text: $draft.gauge.stitchPattern)
             TextField("Needle", text: $draft.gauge.needle)
@@ -113,7 +113,7 @@ struct ImportReviewView: View {
         } header: {
             Text("Sizes and gauge")
         } footer: {
-            Text("Size names in order, separated by commas.").scaledFont(.caption).foregroundStyle(.secondary)
+            Text("Size names in order, separated by commas. Gauge is the number of stitches and rows in a 10 cm / 4 in square of the swatch; patterns that give it over another span, like \"8 sts to 2 inches\", are converted.").scaledFont(.caption).foregroundStyle(.secondary)
         }
     }
 

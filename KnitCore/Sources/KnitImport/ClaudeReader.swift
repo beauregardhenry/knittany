@@ -117,7 +117,10 @@ public struct ClaudeReader: Sendable {
         the numbers back into the instructions. A knitter checks your draft before it is saved.
 
         - sizes: the size names in order, as the pattern lists them.
-        - gauge: per 10 cm (treat 4 in as 10 cm). stitchPattern and needle as written, or "".
+        - gauge: stitches and rows per 10 cm (treat 4 in as 10 cm). Convert other spans: "8 sts to \
+          2 inches" is 16 sts per 4 in; "5½ sts per inch" is 22. Garter ridges are 2 rows each. If the \
+          pattern gives no row gauge, use 1.4 times the stitches and add a note saying the rows are \
+          estimated and should be counted on a swatch. stitchPattern and needle as written, or "".
         - chestEase: the recommended ease at the chest in cm (negative for negative ease), or null.
         - measurements: every finished measurement per size, in cm (convert inches), from the size \
           table or schematic. Set dimension to the matching garment measurement or null. Always \

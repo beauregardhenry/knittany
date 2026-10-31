@@ -14,6 +14,21 @@ public struct Gauge: Codable, Sendable, Equatable {
     }
 
     public var stitchesPerCm: Double { stitchesPer10cm / 10 }
+
+    /// Why this gauge can't be a real one, if it can't: real yarns knit roughly 6 to 50
+    /// stitches per 10 cm, with rows about 1 to 2 times the stitches.
+    public static func problems(stitchesPer10cm sts: Double, rowsPer10cm rows: Double) -> [String] {
+        var out: [String] = []
+        if sts < 6 || sts > 50 {
+            out.append("\(MeasureFormatter.trim(sts)) stitches per 10 cm / 4 in isn't a gauge real yarn gives (about 6 to 50). Check the pattern's gauge.")
+        }
+        if sts >= 6, rows < sts * 0.9 || rows > sts * 2.2 {
+            out.append("\(MeasureFormatter.trim(rows)) rows per 10 cm / 4 in doesn't go with \(MeasureFormatter.trim(sts)) stitches; rows are usually 1 to 2 times the stitches (about \(MeasureFormatter.trim((sts * 1.4).rounded())) here).")
+        }
+        return out
+    }
+
+    public var problems: [String] { Self.problems(stitchesPer10cm: stitchesPer10cm, rowsPer10cm: rowsPer10cm) }
     public var rowsPerCm: Double { rowsPer10cm / 10 }
 }
 

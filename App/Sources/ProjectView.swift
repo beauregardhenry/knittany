@@ -309,6 +309,9 @@ struct ProjectView: View {
                     .labelsHidden().frame(width: 70)
                 }
                 .id(gaugePerInches)
+                ForEach(g.problems, id: \.self) {
+                    Label($0, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange).scaledFont(.callout)
+                }
             }
         } header: {
             Text("Gauge")
