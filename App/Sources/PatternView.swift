@@ -148,10 +148,10 @@ struct PhotoThumbnail: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .contentShape(Rectangle())
-            .task(id: url) { image = await Self.thumbnail(url) }
+            .task(id: url) { image = Self.thumbnail(url) }
     }
 
-    nonisolated static func thumbnail(_ url: URL) async -> NSImage? {
+    static func thumbnail(_ url: URL) -> NSImage? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
               let cg = CGImageSourceCreateThumbnailAtIndex(source, 0, [
                   kCGImageSourceCreateThumbnailFromImageAlways: true,
