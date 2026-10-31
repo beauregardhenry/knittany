@@ -44,6 +44,24 @@ struct LibraryTests {
         #expect(!FileManager.default.fileExists(atPath: store.patternURL(entry.id).path))
     }
 
+    @Test func photosStayInOrder() throws {
+        let store = LibraryStore(root: try tempFolder())
+        var index = try store.load()
+        let entry = try store.importPattern(from: fixtureURL("test-sweater"), into: &index)
+        #expect(store.photos(entry.id).isEmpty)
+        let originals = try tempFolder()
+        let files = ["front.jpg", "back.jpg", "detail.png"].map { originals.appendingPathComponent($0) }
+        for f in files { try Data([1]).write(to: f) }
+        try store.addPhotos(Array(files.prefix(2)), to: entry.id)
+        try store.addPhotos([files[2]], to: entry.id)
+        #expect(store.photos(entry.id).map(\.lastPathComponent) == ["001 front.jpg", "002 back.jpg", "003 detail.png"])
+        // The same photo can be added twice without clashing.
+        try store.addPhotos([files[0]], to: entry.id)
+        #expect(store.photos(entry.id).last?.lastPathComponent == "004 front.jpg")
+        try store.removePhoto(store.photos(entry.id)[1])
+        #expect(store.photos(entry.id).map(\.lastPathComponent) == ["001 front.jpg", "003 detail.png", "004 front.jpg"])
+    }
+
     @Test func projectRegrade() throws {
         let pattern = try Pattern.load(from: fixtureURL("test-sweater"))
         let person = Person(name: "Wearer", measurements: [.chest: 90, .wrist: 15])
