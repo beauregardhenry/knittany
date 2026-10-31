@@ -15,6 +15,12 @@ public struct SchematicDrawing {
     let shape: SleeveShape
     let neckline: Neckline
 
+    /// Whether the pattern is a sweater this drawing fits. A cowl, hat or shawl isn't, and is
+    /// left without a schematic rather than drawn as one.
+    public static func fits(_ pattern: KnitCore.Pattern) -> Bool {
+        pattern.garment != nil || pattern.schematic.contains { $0.dimension == .chest }
+    }
+
     public init(result: GradeResult) {
         var labels: [GarmentMeasure: Label] = [:]
         var size: [GarmentMeasure: Double] = [:]
