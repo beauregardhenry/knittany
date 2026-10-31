@@ -23,6 +23,8 @@ final class LibraryModel {
     /// A sweater being designed from scratch, or a designed pattern being changed.
     var designing: DesignSession?
     private var patternCache: [UUID: KnitCore.Pattern] = [:]
+    /// Bumped when photos change, since they live in the pattern's folder rather than the index.
+    private var photoRevision = 0
 
     /// `KNITTANY_LIBRARY` points the app at another folder, for testing.
     static var defaultStore: LibraryStore {
@@ -158,6 +160,31 @@ final class LibraryModel {
 
     func sourcePDF(_ id: UUID) -> URL? {
         entry(id)?.hasSourcePDF == true ? store.sourcePDFURL(id) : nil
+    }
+
+    func photos(_ id: UUID) -> [URL] {
+        _ = photoRevision
+        return store.photos(id)
+    }
+
+    func addPhotos(_ urls: [URL], to id: UUID) {
+        let accessed = urls.filter { $0.startAccessingSecurityScopedResource() }
+        defer { accessed.forEach { $0.stopAccessingSecurityScopedResource() } }
+        do {
+            try store.addPhotos(urls, to: id)
+        } catch {
+            errorMessage = "Couldn't add the photos: \(error)"
+        }
+        photoRevision += 1
+    }
+
+    func removePhoto(_ url: URL) {
+        do {
+            try store.removePhoto(url)
+        } catch {
+            errorMessage = "Couldn't remove the photo: \(error)"
+        }
+        photoRevision += 1
     }
 
     func deletePattern(_ id: UUID) {

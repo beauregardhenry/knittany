@@ -119,7 +119,7 @@ public struct LibraryIndex: Codable, Sendable, Equatable {
 }
 
 /// Everything the app keeps, as plain files in one folder:
-/// `library.json`, plus `patterns/<id>/pattern.json` and `source.pdf`.
+/// `library.json`, plus `patterns/<id>/pattern.json`, `source.pdf` and `photos/`.
 public struct LibraryStore: Sendable {
     public let root: URL
 
@@ -151,6 +151,35 @@ public struct LibraryStore: Sendable {
 
     public func patternURL(_ id: UUID) -> URL { folder(id).appendingPathComponent("pattern.json") }
     public func sourcePDFURL(_ id: UUID) -> URL { folder(id).appendingPathComponent("source.pdf") }
+
+    public func photosFolder(_ id: UUID) -> URL { folder(id).appendingPathComponent("photos", isDirectory: true) }
+
+    /// A pattern's sample photos, in the order they were added.
+    public func photos(_ id: UUID) -> [URL] {
+        let files = (try? FileManager.default.contentsOfDirectory(at: photosFolder(id), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? []
+        return files.sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
+    }
+
+    /// Copies photos in after any already there, numbered so they stay in order.
+    @discardableResult
+    public func addPhotos(_ urls: [URL], to id: UUID) throws -> [URL] {
+        let fm = FileManager.default
+        try fm.createDirectory(at: photosFolder(id), withIntermediateDirectories: true)
+        var next = (photos(id).compactMap { Int($0.lastPathComponent.prefix(3)) }.max() ?? 0) + 1
+        var added: [URL] = []
+        for url in urls {
+            let dest = photosFolder(id).appendingPathComponent(String(format: "%03d ", next) + url.lastPathComponent)
+            try fm.copyItem(at: url, to: dest)
+            added.append(dest)
+            next += 1
+        }
+        return added
+    }
+
+    /// Moves one of a pattern's photos to the Trash.
+    public func removePhoto(_ url: URL) throws {
+        try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+    }
 
     public func load() throws -> LibraryIndex {
         guard FileManager.default.fileExists(atPath: indexURL.path) else { return LibraryIndex() }
