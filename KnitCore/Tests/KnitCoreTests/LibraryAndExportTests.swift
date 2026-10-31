@@ -86,6 +86,22 @@ struct ExportTests {
         return try project.regrade(pattern: pattern, person: Person(name: "W", measurements: [.chest: 90]))
     }
 
+    @Test func noSweaterSchematicForACowl() throws {
+        let cowl = KnitCore.Pattern(
+            name: "Cowl", sizes: ["One size"], gauge: Gauge(stitchesPer10cm: 16, rowsPer10cm: 22),
+            schematic: [], quantities: [Quantity(id: "co", kind: .stitches, value: 120)], sections: [Section(title: "Cowl", lines: ["CO {co} sts."])]
+        )
+        try cowl.validate()
+        #expect(!SchematicDrawing.fits(cowl))
+        let plan = try EaseModel.plan(for: cowl, body: [:])
+        let result = try Grader(pattern: cowl).grade(GradeRequest(targets: plan.gradeTargets))
+        let doc = try #require(PDFDocument(data: try PDFExporter.export(result, plan: plan)))
+        // Summary and instructions only.
+        #expect(doc.pageCount == 2)
+        #expect(!(doc.string ?? "").contains("Schematic"))
+        #expect(doc.page(at: 1)?.string?.contains("CO 120 sts.") == true)
+    }
+
     @Test func pagesInOrder() throws {
         let (result, plan) = try gradedFixture()
         let data = try PDFExporter.export(result, plan: plan, options: .init(pageSize: PDFExporter.letter, personName: "W"))

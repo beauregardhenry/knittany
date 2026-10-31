@@ -48,14 +48,16 @@ public enum PDFExporter {
         var writer = PageWriter(ctx: ctx, size: options.pageSize, footer: footer(result, options))
         writer.flow(summary(result, plan: plan, options: options))
 
-        writer.newPage()
-        writer.drawFlipped { ctx, rect in
-            Ink.text("Schematic", at: CGPoint(x: rect.minX, y: rect.minY + 8), in: ctx, size: 15, bold: true, anchor: .left)
-            Ink.text(
-                "Measurements of the finished garment, before blocking.",
-                at: CGPoint(x: rect.minX, y: rect.minY + 26), in: ctx, size: 9.5, color: Ink.faint, anchor: .left
-            )
-            SchematicDrawing(result: result).draw(in: ctx, rect: CGRect(x: rect.minX, y: rect.minY + 44, width: rect.width, height: rect.height * 0.62))
+        if SchematicDrawing.fits(result.pattern) {
+            writer.newPage()
+            writer.drawFlipped { ctx, rect in
+                Ink.text("Schematic", at: CGPoint(x: rect.minX, y: rect.minY + 8), in: ctx, size: 15, bold: true, anchor: .left)
+                Ink.text(
+                    "Measurements of the finished garment, before blocking.",
+                    at: CGPoint(x: rect.minX, y: rect.minY + 26), in: ctx, size: 9.5, color: Ink.faint, anchor: .left
+                )
+                SchematicDrawing(result: result).draw(in: ctx, rect: CGRect(x: rect.minX, y: rect.minY + 44, width: rect.width, height: rect.height * 0.62))
+            }
         }
 
         writer.newPage()
