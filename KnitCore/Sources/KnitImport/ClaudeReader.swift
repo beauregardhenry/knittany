@@ -121,10 +121,12 @@ public struct ClaudeReader: Sendable {
           2 inches" is 16 sts per 4 in; "5½ sts per inch" is 22. Garter ridges are 2 rows each. If the \
           pattern gives no row gauge, use 1.4 times the stitches and add a note saying the rows are \
           estimated and should be counted on a swatch. stitchPattern and needle as written, or "".
-        - chestEase: the recommended ease at the chest in cm (negative for negative ease), or null.
+        - primary: the finished measurement that picks the size: chest for sweaters, head for hats \
+          and hoods, neckOpening for cowls. null for a one-size pattern that gives no measurements.
+        - chestEase: the recommended ease at that measurement in cm (negative for negative ease), or null.
         - measurements: every finished measurement per size, in cm (convert inches), from the size \
-          table or schematic. Set dimension to the matching garment measurement or null. Always \
-          include the finished chest; if the pattern only gives the width across the back, double it \
+          table or schematic. Set dimension to the matching garment measurement or null. For a \
+          sweater, always include the finished chest; if the pattern only gives the width across the back, double it \
           and say so in the label. ids are single lower-case letters, a, b, c…
         - numbers: every number in the instructions that differs between sizes, with one value per size. \
           kind: stitches, rows (rows or rounds), count (times to repeat), length (in cm), yarn (in metres) \
@@ -165,6 +167,7 @@ public struct ClaudeReader: Sendable {
             "sizes": ["type": "array", "items": string],
             "gauge": object(["stitchesPer10cm": number, "rowsPer10cm": number, "stitchPattern": string, "needle": string]),
             "chestEase": nullable(number),
+            "primary": nullable(dimension),
             "measurements": ["type": "array", "items": object(["id": string, "label": string, "dimension": nullable(dimension), "values": numbers])],
             "numbers": ["type": "array", "items": object(["id": string, "kind": kind, "driver": nullable(dimension), "values": numbers, "context": string])],
             "sections": ["type": "array", "items": object(["id": string, "title": string, "lines": ["type": "array", "items": string], "include": ["type": "boolean"]])],

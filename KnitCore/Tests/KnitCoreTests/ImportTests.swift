@@ -127,7 +127,7 @@ struct OfflineReaderTests {
         d.measurements.removeAll { $0.dimension == .chest }
         d.sections[d.sections.count - 1].lines.append("K{nope} sts.")
         let problems = DraftBuilder.problems(d)
-        #expect(problems.contains { $0.contains("finished chest") })
+        #expect(problems.contains { $0.contains("picks the size") })
         #expect(problems.contains { $0.contains("{nope}") })
         #expect(throws: PatternError.self) { try DraftBuilder.pattern(from: d) }
     }
@@ -294,5 +294,63 @@ struct GaugeProblemTests {
         #expect(Gauge.problems(stitchesPer10cm: 3, rowsPer10cm: 30).count == 1)
         #expect(Gauge.problems(stitchesPer10cm: 22, rowsPer10cm: 30).isEmpty)
         #expect(Gauge.problems(stitchesPer10cm: 18, rowsPer10cm: 38).isEmpty, "garter: 2 rows per ridge")
+    }
+}
+
+@Suite("Patterns that aren't sized by the chest")
+struct OtherSizingTests {
+    func pattern(sizes: [String], schematic: [SchematicEntry], primary: GarmentMeasure, quantities: [Quantity]) throws -> KnitCore.Pattern {
+        let p = KnitCore.Pattern(
+            name: "Hat", sizes: sizes, gauge: Gauge(stitchesPer10cm: 20, rowsPer10cm: 28), primaryDimension: primary,
+            schematic: schematic, quantities: quantities, sections: [Section(title: "Hat", lines: ["CO {co} sts."])]
+        )
+        try p.validate()
+        return p
+    }
+
+    @Test func oneSizeWithoutMeasurementsIsKnittedAsWritten() throws {
+        let p = try pattern(sizes: ["One size"], schematic: [], primary: .chest, quantities: [Quantity(id: "co", kind: .stitches, value: 67)])
+        let plan = try EaseModel.plan(for: p, body: [:])
+        #expect(plan.targets.isEmpty && plan.notes.contains { $0.contains("one size") })
+        let r = try Grader(pattern: p).grade(GradeRequest(targets: plan.gradeTargets))
+        #expect(r.sections[0].lines == ["CO 67 sts."])
+        // A different gauge still rescales the stitches.
+        let mine = try Grader(pattern: p).grade(GradeRequest(targets: [:], gauge: Gauge(stitchesPer10cm: 22, rowsPer10cm: 28)))
+        #expect(mine.sections[0].lines == ["CO 74 sts."])
+    }
+
+    @Test func oneSizeScalesInProportionToItsMeasurement() throws {
+        let p = try pattern(
+            sizes: ["One size"], schematic: [SchematicEntry(id: "a", label: "Head", dimension: .head, values: [56])], primary: .head,
+            quantities: [Quantity(id: "co", kind: .stitches, values: [96], driver: .head)]
+        )
+        let r = try Grader(pattern: p).grade(GradeRequest(targets: [.head: 60]))
+        #expect(r.sections[0].lines == ["CO 103 sts."], "96 × 60 / 56")
+        #expect(r.position.contains("one size"))
+        // With no measurement for the wearer, it's as written.
+        let plan = try EaseModel.plan(for: p, body: [:])
+        #expect(try Grader(pattern: p).grade(GradeRequest(targets: plan.gradeTargets)).sections[0].lines == ["CO 96 sts."])
+    }
+
+    @Test func sizedByHead() throws {
+        let p = try pattern(
+            sizes: ["S", "M", "L"], schematic: [SchematicEntry(id: "a", label: "Head", dimension: .head, values: [50, 54, 58])], primary: .head,
+            quantities: [Quantity(id: "co", kind: .stitches, values: [100, 108, 116], driver: .head)]
+        )
+        let plan = try EaseModel.plan(for: p, body: [.head: 52], easeOverrides: [.head: -4])
+        let r = try Grader(pattern: p).grade(GradeRequest(targets: plan.gradeTargets))
+        #expect(r.sections[0].lines == ["CO 96 sts."], "a 52 cm head with 4 cm negative ease is a 48 cm hat")
+    }
+
+    @Test(.enabled(if: FileManager.default.fileExists(atPath: PrivatePatterns.folder.appendingPathComponent("ranger-cowl.pdf").path)))
+    func rangerCowlImports() throws {
+        let draft = try OfflineReader.read(PrivatePatterns.folder.appendingPathComponent("ranger-cowl.pdf"), ocr: false)
+        #expect(draft.sizes.count == 1)
+        #expect(draft.gauge.stitchesPer10cm == 16, "8 sts to 2 inches")
+        #expect(DraftBuilder.problems(draft).isEmpty, "\(DraftBuilder.problems(draft))")
+        let pattern = try DraftBuilder.pattern(from: draft)
+        let plan = try EaseModel.plan(for: pattern, body: [.chest: 100])
+        let r = try Grader(pattern: pattern).grade(GradeRequest(targets: plan.gradeTargets))
+        #expect(r.sections.flatMap(\.lines).contains { $0.contains("67") })
     }
 }

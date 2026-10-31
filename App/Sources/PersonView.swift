@@ -9,7 +9,7 @@ struct PersonView: View {
     /// The order a knitter would measure in.
     static let order: [BodyMeasure] = [
         .chest, .waist, .hip, .upperArm, .wrist, .armLength, .crossBack,
-        .neck, .backWaistLength, .armholeDepth, .neckToWrist, .height,
+        .neck, .head, .backWaistLength, .armholeDepth, .neckToWrist, .height,
     ]
 
     var body: some View {

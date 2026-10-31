@@ -108,8 +108,9 @@ struct ProjectView: View {
             output = nil
             if person == nil {
                 problem = "Choose who this is for, or enter a finished chest measurement under Changes."
-            } else if person?.measurements[.chest] == nil && project.finishedOverrides[pattern.primaryDimension] == nil {
-                problem = "Enter \(person?.name ?? "their")'s chest measurement to regrade."
+            } else if let bm = pattern.primaryDimension.bodyMeasure, person?.measurements[bm] == nil,
+                      project.finishedOverrides[pattern.primaryDimension] == nil {
+                problem = "Enter \(person?.name ?? "their")'s \(bm.label.lowercased()) measurement to regrade."
             } else if pattern.statedEase?[pattern.primaryDimension] == nil && project.easeOverrides[pattern.primaryDimension] == nil {
                 problem = "This pattern doesn't say how much ease it has. Enter the ease you'd like at the \(pattern.primaryDimension.label.lowercased()) under Ease, on the left."
             } else {

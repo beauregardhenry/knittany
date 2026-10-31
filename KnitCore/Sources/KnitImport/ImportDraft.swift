@@ -16,8 +16,13 @@ public struct ImportDraft: Codable, Sendable, Equatable {
     public var garment: GarmentType?
     public var sizes: [String]
     public var gauge: DraftGauge
-    /// Ease the designer recommends at the chest, in cm.
+    /// Ease the designer recommends at the measurement that picks the size, in cm.
+    /// (Named for the chest, which picks the size for sweaters.)
     public var chestEase: Double?
+    /// The finished measurement that picks the size: the chest for a sweater, the head for a
+    /// hat or hood, the neck opening for a cowl. Nil means the chest, or for a one-size pattern
+    /// without measurements, none at all.
+    public var primary: GarmentMeasure?
     public var measurements: [DraftMeasurement]
     public var numbers: [DraftNumber]
     public var sections: [DraftSection]
@@ -28,8 +33,9 @@ public struct ImportDraft: Codable, Sendable, Equatable {
     public init(
         method: Method, name: String, designer: String, garment: GarmentType?, sizes: [String], gauge: DraftGauge,
         chestEase: Double?, measurements: [DraftMeasurement], numbers: [DraftNumber], sections: [DraftSection],
-        chartPages: [DraftPage], notes: [String]
+        chartPages: [DraftPage], notes: [String], primary: GarmentMeasure? = nil
     ) {
+        self.primary = primary
         self.method = method
         self.name = name
         self.designer = designer
@@ -42,6 +48,15 @@ public struct ImportDraft: Codable, Sendable, Equatable {
         self.sections = sections
         self.chartPages = chartPages
         self.notes = notes
+    }
+
+    /// The measurement that picks the size: the chosen one if it's in the table, else the
+    /// chest. Anything else has to be chosen, so a sweater missing its chest is never quietly
+    /// sized by, say, its upper arm. Nil when there's nothing to pick by.
+    public var sizeMeasure: GarmentMeasure? {
+        let dims = measurements.compactMap(\.dimension)
+        if let p = primary, dims.contains(p) { return p }
+        return dims.contains(.chest) ? .chest : nil
     }
 
     /// Numbers that the included sections refer to.
@@ -152,7 +167,8 @@ public enum DraftSummary {
         var out = ["\(d.name)\(d.designer.isEmpty ? "" : " by \(d.designer)") (read \(d.method == .claude ? "with Claude" : "offline"))"]
         out.append("Sizes: \(d.sizes.joined(separator: ", "))")
         out.append("Gauge: \(MeasureFormatter.trim(d.gauge.stitchesPer10cm)) sts × \(MeasureFormatter.trim(d.gauge.rowsPer10cm)) rows per 10 cm \(d.gauge.stitchPattern)")
-        if let e = d.chestEase { out.append("Chest ease: \(MeasureFormatter.trim(e)) cm") }
+        out.append("Size picked by: \(d.sizeMeasure?.label ?? "nothing (one size, knitted as written)")")
+        if let e = d.chestEase { out.append("Ease: \(MeasureFormatter.trim(e)) cm") }
         out.append("Measurements:")
         for m in d.measurements {
             out.append("  \(m.label) [\(m.dimension?.rawValue ?? "–")]: \(m.values.map(MeasureFormatter.trim).joined(separator: ", ")) cm")

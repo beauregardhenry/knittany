@@ -52,7 +52,8 @@ public struct Pattern: Codable, Sendable {
         for s in schematic where s.values.count != n {
             throw PatternError("schematic \(s.id) has \(s.values.count) values for \(n) sizes")
         }
-        guard schematic.contains(where: { $0.dimension == primaryDimension }) else {
+        // A one-size pattern may give no finished measurements at all; it's then knitted as written.
+        guard schematic.contains(where: { $0.dimension == primaryDimension }) || n == 1 else {
             throw PatternError("the schematic has no \(primaryDimension.rawValue) measurement")
         }
         for chart in charts ?? [] {
