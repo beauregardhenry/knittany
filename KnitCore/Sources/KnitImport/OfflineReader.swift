@@ -130,30 +130,106 @@ struct Reader {
     // MARK: Gauge
 
     mutating func findGauge() -> DraftGauge {
-        let pattern = #"(\d+(?:\.\d+)?)\s*(?:sts|stitches|st)\b[^0-9]{0,20}?(\d+(?:\.\d+)?)\s*(?:rows|rnds|rounds|ridges)\b([^.]{0,60})"#
-        for (i, p) in paragraphs.enumerated() {
-            guard let m = firstMatch(pattern, in: p.text, options: .caseInsensitive),
-                  var sts = Double(m[1]), var rows = Double(m[2]) else { continue }
-            let after = m[3].lowercased()
-            let around = (p.text + " " + (i + 1 < paragraphs.count ? paragraphs[i + 1].text : "")).lowercased()
-            let per10 = after.contains("10") || after.contains("4") || after.contains("cm")
-            if !per10, after.contains("inch") || after.contains("1\"") || after.contains("1″") {
-                sts *= 10 / 2.54
-                rows *= 10 / 2.54
-            } else if !per10 {
-                continue
-            }
-            if after.contains("ridges") { rows *= 2 }
+        // Look where the pattern says "gauge" or "tension" first, then anywhere.
+        let labelled = paragraphs.indices.filter { i in
+            let l = paragraphs[i].text.lowercased()
+            return l.contains("gauge") || l.contains("tension")
+        }
+        let places = labelled.map { i in (i, paragraphs[i].text + " " + (i + 1 < paragraphs.count ? paragraphs[i + 1].text : "")) }
+            + paragraphs.indices.map { ($0, paragraphs[$0].text) }
+        for (_, text) in places {
+            guard let g = Self.parseGauge(text) else { continue }
+            let lower = text.lowercased()
             let stitchPattern = #"(\bst st\b|stockinette|stocking|garter|seed|moss|brioche|lace|colou?rwork|\w+ rib(?:bing)?|pattern)(?: stitch| st)?"#
-            let before = String(p.text.lowercased().components(separatedBy: m[0].lowercased()).first?.suffix(60) ?? "")
-            var stitch = [after, before, around].lazy.compactMap { firstMatch(stitchPattern, in: $0, options: .caseInsensitive)?[0] }.first ?? ""
-            if stitch.lowercased() == "st st" { stitch = "stockinette stitch" }
-            let needle = firstMatch(#"US\s*\d+(?:\.\d+)?\s*\(?\s*\d+(?:\.\d+)?\s*mm\)?|\d+(?:\.\d+)?\s*mm"#, in: around, options: .caseInsensitive)?[0] ?? ""
-            return DraftGauge(stitchesPer10cm: (sts * 4).rounded() / 4, rowsPer10cm: (rows * 4).rounded() / 4, stitchPattern: stitch, needle: needle)
+            var stitch = firstMatch(stitchPattern, in: lower, options: .caseInsensitive)?[0] ?? ""
+            if stitch == "st st" { stitch = "stockinette stitch" }
+            let needle = firstMatch(#"US\s*\d+(?:\.\d+)?\s*\(?\s*\d+(?:\.\d+)?\s*mm\)?|\d+(?:\.\d+)?\s*mm"#, in: text, options: .caseInsensitive)?[0] ?? ""
+            var rows = g.rows
+            if rows == nil {
+                rows = Self.estimatedRows(stitches: g.stitches)
+                notes.append("The pattern doesn't give a row gauge, so it's estimated at \(MeasureFormatter.trim(rows!)) rows per 10 cm / 4 in. Count the rows in your swatch and enter them.")
+            }
+            return DraftGauge(stitchesPer10cm: g.stitches, rowsPer10cm: rows!, stitchPattern: stitch, needle: needle)
         }
         notes.append("The gauge wasn't found. Enter the pattern's gauge before saving; stitch counts are rescaled from it.")
         return DraftGauge(stitchesPer10cm: 20, rowsPer10cm: 28)
     }
+
+    /// A number as patterns write it: "22", "5.5", "5½", "5 1/2" or "½".
+    static let numberPattern = #"(\d+(?:\.\d+)?(?:\s*(?:½|¼|¾|1/2|1/4|3/4))?|½|¼|¾)"#
+
+    static func number(_ text: String) -> Double? {
+        var t = text.trimmingCharacters(in: .whitespaces)
+        var extra = 0.0
+        for (frac, v) in [("½", 0.5), ("¼", 0.25), ("¾", 0.75), ("1/2", 0.5), ("1/4", 0.25), ("3/4", 0.75)] where t.hasSuffix(frac) {
+            extra = v
+            t = String(t.dropLast(frac.count)).trimmingCharacters(in: .whitespaces)
+            break
+        }
+        if t.isEmpty { return extra }
+        return Double(t).map { $0 + extra }
+    }
+
+    /// Reads a gauge however it's written, as stitches (and rows, if given) per 10 cm / 4 in:
+    /// "22 sts and 30 rows = 4" / 10 cm", "8 sts to 2 inches", "4 sts per inch",
+    /// "5½ sts = 1 inch", "18 sts x 24 rows over 10 cm", "20 sts to 4 in; 28 rows to 4 in".
+    /// A stitch count only counts when it's measured over an explicit span, so "CO 8 sts" isn't one.
+    static func parseGauge(_ text: String) -> (stitches: Double, rows: Double?)? {
+        let n = numberPattern
+        let unit = #"(inch(?:es)?|in\b|"|″|”|''|cm|centimet(?:re|er)s?)"#
+        let span = #"(?:to|per|=|in|over|across|for|measures?|:|-|–)\s*(?:"# + n + #"\s*)?"# + unit
+        let stitchRE = n + #"\s*(?:sts?|stitches)\b"#
+        let rowRE = n + #"\s*(?:garter\s+)?(rows?|rnds?|rounds?|ridges)\b"#
+
+        /// Per 10 cm / 4 in, from a count over `amount` of `unit`. Four inches and 10 cm are
+        /// treated as the same, as patterns do.
+        func perTen(_ count: Double, _ amount: String, _ unit: String) -> Double? {
+            let u = unit.lowercased()
+            let a = amount.isEmpty ? 1 : (number(amount) ?? 0)
+            guard a > 0 else { return nil }
+            return u.hasPrefix("c") ? count * 10 / a : count * 4 / a
+        }
+        func round(_ v: Double) -> Double { (v * 4).rounded() / 4 }
+
+        // The span that follows a count, within the same sentence: "8 sts to 2 inches",
+        // or "22 sts and 30 rows = 4"", where one span covers both.
+        func spanAfter(_ end: String.Index) -> (String, String)? {
+            let rest = String(text[end...].prefix(70))
+            let sentence = rest.split(separator: ".", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? rest
+            guard let m = firstMatch(span, in: sentence, options: .caseInsensitive) else { return nil }
+            return (m[1], m[2])
+        }
+
+        guard let sm = text.range(of: stitchRE, options: [.regularExpression, .caseInsensitive]),
+              let sNum = firstMatch(stitchRE, in: String(text[sm]), options: .caseInsensitive).flatMap({ number($0[1]) }) else { return nil }
+        // Rows written right after the stitches share their span: "22 sts and 30 rows = 4"".
+        var rowsCount: Double?
+        var ridges = false
+        var spanStart = sm.upperBound
+        let joined = String(text[sm.upperBound...].prefix(25))
+        if let rm = firstMatch(#"^\s*(?:and|&|x|×|,|/|by)?\s*"# + rowRE, in: joined, options: .caseInsensitive) {
+            rowsCount = number(rm[1])
+            ridges = rm[2].lowercased().hasPrefix("ridge")
+            spanStart = text.index(sm.upperBound, offsetBy: rm[0].count)
+        }
+        guard let (amount, u) = spanAfter(spanStart), let stitches = perTen(sNum, amount, u) else { return nil }
+        var rows = rowsCount.flatMap { perTen($0, amount, u) }
+        // Or rows given separately: "…; 6 rows to 1 inch".
+        if rows == nil, let rr = text.range(of: rowRE, options: [.regularExpression, .caseInsensitive], range: sm.upperBound..<text.endIndex),
+           let rm = firstMatch(rowRE, in: String(text[rr]), options: .caseInsensitive), let count = number(rm[1]),
+           let (a, ru) = spanAfter(rr.upperBound) {
+            rows = perTen(count, a, ru)
+            ridges = rm[2].lowercased().hasPrefix("ridge")
+        }
+        if ridges { rows = rows.map { $0 * 2 } }
+        // Real yarns knit between about 6 and 50 stitches per 10 cm, and rows run about 1 to 2 times the stitches.
+        guard (6...50).contains(stitches) else { return nil }
+        if let r = rows, !(stitches * 0.9...stitches * 2.2).contains(r) { rows = nil }
+        return (round(stitches), rows.map(round))
+    }
+
+    /// A typical stockinette row gauge for a stitch gauge, when the pattern gives none.
+    static func estimatedRows(stitches: Double) -> Double { ((stitches * 1.4) * 4).rounded() / 4 }
 
     // MARK: Ease
 

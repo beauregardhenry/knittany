@@ -248,3 +248,51 @@ struct SizeNotationTests {
         #expect(runs.map(\.unit) == [.stitches, .stitches, nil, nil])
     }
 }
+
+@Suite("Reading gauges")
+struct GaugeReadingTests {
+    @Test func readsModernAndOlderStyles() {
+        let cases: [(String, Double, Double?)] = [
+            ("Gauge 8 sts to 2 inches", 16, nil),
+            ("22 sts and 30 rows = 4\" / 10 cm in stockinette stitch", 22, 30),
+            ("Gauge: 18 sts & 38 rows = 4″ / 10cm in garter stitch", 18, 38),
+            ("4 sts per inch", 16, nil),
+            ("Tension: 5½ sts = 1 inch", 22, nil),
+            ("5 1/2 sts and 7 rows to 1 inch", 22, 28),
+            ("18 sts x 24 rows over 10 cm", 18, 24),
+            ("20 sts to 4 in; 28 rows to 4 in", 20, 28),
+            ("14 sts and 19 rows per 10 cm/4\"", 14, 19),
+            ("24 stitches x 34 rows – 4\" / 10 cm, Stockinette stitch", 24, 34),
+            ("16 sts and 16 garter ridges to 4 inches", 16, 32),
+        ]
+        for (text, sts, rows) in cases {
+            let g = Reader.parseGauge(text)
+            #expect(g?.stitches == sts, "\(text): \(String(describing: g))")
+            #expect(g?.rows == rows, "\(text): \(String(describing: g))")
+        }
+    }
+
+    @Test func ignoresCountsThatArentAGauge() {
+        #expect(Reader.parseGauge("CO 8 sts and join to work in the round.") == nil)
+        #expect(Reader.parseGauge("Work 2 rows even, then decrease 4 sts.") == nil)
+        #expect(Reader.parseGauge("Knit 120 sts to 4 inches from the cast on") == nil, "120 sts per 4 in isn't a real gauge")
+    }
+
+    @Test func estimatesAMissingRowGauge() throws {
+        var reader = Reader(paragraphs: [Paragraph(text: "Gauge 8 sts to 2 inches", page: 1, height: 10)], fileName: "old")
+        let g = reader.findGauge()
+        #expect(g.stitchesPer10cm == 16)
+        #expect(g.rowsPer10cm == Reader.estimatedRows(stitches: 16))
+        #expect(reader.notes.contains { $0.contains("doesn't give a row gauge") })
+    }
+}
+
+@Suite("Impossible gauges")
+struct GaugeProblemTests {
+    @Test func flagsGaugesNoYarnGives() {
+        #expect(Gauge.problems(stitchesPer10cm: 8, rowsPer10cm: 2).count == 1, "8 sts is possible, 2 rows isn't")
+        #expect(Gauge.problems(stitchesPer10cm: 3, rowsPer10cm: 30).count == 1)
+        #expect(Gauge.problems(stitchesPer10cm: 22, rowsPer10cm: 30).isEmpty)
+        #expect(Gauge.problems(stitchesPer10cm: 18, rowsPer10cm: 38).isEmpty, "garter: 2 rows per ridge")
+    }
+}
