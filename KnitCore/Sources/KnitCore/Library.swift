@@ -109,6 +109,36 @@ public struct PatternEntry: Codable, Sendable, Identifiable, Equatable {
     public var designer: String?
     public var addedAt: Date
     public var hasSourcePDF: Bool
+    /// The knitter's own notes on the pattern.
+    public var notes: String
+    /// Starred, so it's listed under Favorites at the top of the sidebar.
+    public var favorite: Bool
+
+    public init(id: UUID, name: String, designer: String?, addedAt: Date, hasSourcePDF: Bool, notes: String = "", favorite: Bool = false) {
+        self.id = id
+        self.name = name
+        self.designer = designer
+        self.addedAt = addedAt
+        self.hasSourcePDF = hasSourcePDF
+        self.notes = notes
+        self.favorite = favorite
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, designer, addedAt, hasSourcePDF, notes, favorite
+    }
+
+    /// Libraries saved before notes and favorites read as having none.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        designer = try c.decodeIfPresent(String.self, forKey: .designer)
+        addedAt = try c.decode(Date.self, forKey: .addedAt)
+        hasSourcePDF = try c.decode(Bool.self, forKey: .hasSourcePDF)
+        notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        favorite = try c.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
+    }
 }
 
 public struct LibraryIndex: Codable, Sendable, Equatable {

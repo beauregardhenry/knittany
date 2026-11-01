@@ -6,6 +6,8 @@ enum SidebarItem: Hashable {
     case project(UUID)
     case person(UUID)
     case pattern(UUID)
+    /// A pattern selected from Favorites, so the same pattern isn't highlighted twice.
+    case favorite(UUID)
 }
 
 /// The app's state: everything in the library folder, saved after each change.
@@ -82,6 +84,19 @@ final class LibraryModel {
     // MARK: Patterns
 
     var patterns: [PatternEntry] { index.patterns.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending } }
+    var favorites: [PatternEntry] { patterns.filter(\.favorite) }
+
+    func setFavorite(_ favorite: Bool, for id: UUID) {
+        guard let i = index.patterns.firstIndex(where: { $0.id == id }), index.patterns[i].favorite != favorite else { return }
+        index.patterns[i].favorite = favorite
+        save()
+    }
+
+    func setNotes(_ notes: String, for id: UUID) {
+        guard let i = index.patterns.firstIndex(where: { $0.id == id }), index.patterns[i].notes != notes else { return }
+        index.patterns[i].notes = notes
+        save()
+    }
 
     func entry(_ id: UUID) -> PatternEntry? { index.patterns.first { $0.id == id } }
 

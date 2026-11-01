@@ -44,6 +44,25 @@ struct LibraryTests {
         #expect(!FileManager.default.fileExists(atPath: store.patternURL(entry.id).path))
     }
 
+    @Test func notesAndFavoritesSurviveSaving() throws {
+        let store = LibraryStore(root: try tempFolder())
+        var index = try store.load()
+        let entry = try store.importPattern(from: fixtureURL("test-sweater"), into: &index)
+        #expect(entry.notes.isEmpty && !entry.favorite)
+        index.patterns[0].notes = "Went down a needle size for the ribbing."
+        index.patterns[0].favorite = true
+        try store.save(index)
+        #expect(try store.load().patterns[0] == index.patterns[0])
+    }
+
+    @Test func librariesFromBeforeNotesStillLoad() throws {
+        let root = try tempFolder()
+        let old = #"{"people":[],"projects":[],"patterns":[{"id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","name":"Old","addedAt":0,"hasSourcePDF":false}]}"#
+        try Data(old.utf8).write(to: root.appendingPathComponent("library.json"))
+        let entry = try #require(try LibraryStore(root: root).load().patterns.first)
+        #expect(entry.name == "Old" && entry.notes.isEmpty && !entry.favorite)
+    }
+
     @Test func photosStayInOrder() throws {
         let store = LibraryStore(root: try tempFolder())
         var index = try store.load()
