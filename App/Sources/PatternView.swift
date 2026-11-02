@@ -9,6 +9,12 @@ struct PatternView: View {
     let entry: PatternEntry
     @State private var attachingPDF = false
     @State private var addingPhotos = false
+    @State private var notes: String
+
+    init(entry: PatternEntry) {
+        self.entry = entry
+        _notes = State(initialValue: entry.notes)
+    }
     @State private var confirmingDelete = false
     private let inches = Locale.current.measurementSystem == .us
 
@@ -34,6 +40,12 @@ struct PatternView: View {
                         }
                         Spacer()
                     }
+                }
+
+                Section("My notes") {
+                    TextEditor(text: $notes)
+                        .frame(minHeight: 80)
+                        .onChange(of: notes) { model.setNotes(notes, for: entry.id) }
                 }
 
                 photosSection
@@ -79,6 +91,21 @@ struct PatternView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(pattern.name)
+            .toolbar {
+                Button {
+                    model.setFavorite(!entry.favorite, for: entry.id)
+                } label: {
+                    Label {
+                        Text(entry.favorite ? "Remove from Favorites" : "Add to Favorites")
+                    } icon: {
+                        // Palette rendering keeps the colour; toolbars otherwise draw icons in grey.
+                        Image(systemName: entry.favorite ? "star.fill" : "star")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(entry.favorite ? Color.yellow : Color.secondary)
+                    }
+                }
+                .help(entry.favorite ? "Remove from Favorites" : "Add to Favorites")
+            }
             .fileImporter(isPresented: $attachingPDF, allowedContentTypes: [.pdf]) { result in
                 if case .success(let url) = result { model.attachSourcePDF(url, to: entry.id) }
             }

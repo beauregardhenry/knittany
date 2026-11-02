@@ -13,6 +13,16 @@ struct RootView: View {
         @Bindable var model = model
         NavigationSplitView {
             List(selection: $model.selection) {
+                if !model.favorites.isEmpty {
+                    Section {
+                        ForEach(model.favorites) { p in
+                            SidebarRow(title: p.name, icon: "star.fill").tag(SidebarItem.favorite(p.id))
+                                .contextMenu { favoriteButton(p) }
+                        }
+                    } header: {
+                        Text("Favorites").scaledFont(.subheadline, bold: true)
+                    }
+                }
                 Section {
                     ForEach(model.projects) { p in
                         SidebarRow(title: p.name, icon: "tshirt").tag(SidebarItem.project(p.id))
@@ -34,7 +44,8 @@ struct RootView: View {
                 }
                 Section {
                     ForEach(model.patterns) { p in
-                        SidebarRow(title: p.name, icon: "doc.richtext").tag(SidebarItem.pattern(p.id))
+                        SidebarRow(title: p.name, icon: "doc.richtext", starred: p.favorite).tag(SidebarItem.pattern(p.id))
+                            .contextMenu { favoriteButton(p) }
                     }
                     Button { model.choosingImport = true } label: { SidebarRow(title: "Import Pattern…", icon: "square.and.arrow.down") }
                         .buttonStyle(.borderless)
@@ -51,7 +62,7 @@ struct RootView: View {
                 if let p = model.project(id) { ProjectView(project: p).id(id) }
             case .person(let id):
                 if let p = model.person(id) { PersonView(person: p).id(id) }
-            case .pattern(let id):
+            case .pattern(let id), .favorite(let id):
                 if let e = model.entry(id) { PatternView(entry: e).id(id) }
             case nil:
                 WelcomeView()
@@ -89,11 +100,20 @@ struct RootView: View {
     }
 }
 
+extension RootView {
+    func favoriteButton(_ p: PatternEntry) -> some View {
+        Button(p.favorite ? "Remove from Favorites" : "Add to Favorites", systemImage: p.favorite ? "star.slash" : "star") {
+            model.setFavorite(!p.favorite, for: p.id)
+        }
+    }
+}
+
 /// A sidebar row at the chosen text size. Sidebars set their own size on
 /// ordinary labels, so the row's text and icon are sized here instead.
 struct SidebarRow: View {
     let title: String
     let icon: String
+    var starred = false
     @AppStorage(TextSize.key) private var size = TextSize.standard
 
     var body: some View {
@@ -105,6 +125,13 @@ struct SidebarRow: View {
             Text(title)
                 .font(.system(size: size.points(.body)))
                 .lineLimit(2)
+            if starred {
+                Spacer(minLength: 4)
+                Image(systemName: "star.fill")
+                    .font(.system(size: size.points(.caption)))
+                    .foregroundStyle(.yellow)
+                    .accessibilityLabel("Favorite")
+            }
         }
         .padding(.vertical, size == .standard ? 0 : 2)
         .frame(maxWidth: .infinity, alignment: .leading)
