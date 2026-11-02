@@ -115,11 +115,22 @@ struct PatternView: View {
             .confirmationDialog("Delete \(pattern.name)?", isPresented: $confirmingDelete) {
                 Button("Delete", role: .destructive) { model.deletePattern(entry.id) }
             } message: {
-                Text("Its projects are deleted too. The pattern's files go to the Trash.")
+                Text(deleteMessage)
             }
         } else {
             Text("This pattern couldn't be read.").foregroundStyle(.secondary)
         }
+    }
+
+    /// Says how many projects go with the pattern, since they can't be recovered.
+    var deleteMessage: String {
+        let count = model.projects.filter { $0.patternID == entry.id }.count
+        let projects = switch count {
+        case 0: ""
+        case 1: "Its project is deleted too. "
+        default: "Its \(count) projects are deleted too. "
+        }
+        return projects + "The pattern's files and photos go to the Trash."
     }
 
     /// Photos of the finished piece: the designer's samples, or your own.

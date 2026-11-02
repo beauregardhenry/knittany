@@ -14,6 +14,7 @@ struct ProjectView: View {
     @State private var exporting = false
     @State private var gaugePerInches = Locale.current.measurementSystem == .us
     @State private var mode = Mode.pattern
+    @State private var confirmingDelete = false
     @AppStorage(TextSize.key) private var textSize = TextSize.standard
 
     enum Mode { case pattern, knit }
@@ -157,10 +158,15 @@ struct ProjectView: View {
             }
 
             Section {
-                Button("Delete Project", role: .destructive) { model.deleteProject(project.id) }
+                Button("Delete Project…", role: .destructive) { confirmingDelete = true }
             }
         }
         .formStyle(.grouped)
+        .confirmationDialog("Delete \(project.name)?", isPresented: $confirmingDelete) {
+            Button("Delete", role: .destructive) { model.deleteProject(project.id) }
+        } message: {
+            Text("Its fit choices, gauge, notes and knitting progress are lost. The pattern stays in your library.")
+        }
     }
 
     @ViewBuilder
