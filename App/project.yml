@@ -39,6 +39,8 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Knittany
         # Drawn by Icon/make_icon.swift.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Arco Iris pink, from the icon; Sources/Theme.swift has the rest of the yarn.
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.lifestyle
         INFOPLIST_KEY_NSHumanReadableCopyright: ""
         SWIFT_VERSION: "6.0"
