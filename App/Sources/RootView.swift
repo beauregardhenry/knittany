@@ -16,43 +16,43 @@ struct RootView: View {
                 if !model.favorites.isEmpty {
                     Section {
                         ForEach(model.favorites) { p in
-                            SidebarRow(title: p.name, icon: "star.fill").tag(SidebarItem.favorite(p.id))
+                            SidebarRow(title: p.name, icon: "star.fill", colour: Yarn.yellow).tag(SidebarItem.favorite(p.id))
                                 .contextMenu { favoriteButton(p) }
                         }
                     } header: {
-                        Text("Favorites").scaledFont(.subheadline, bold: true)
+                        SidebarHeader(title: "Favorites", colour: Yarn.yellow)
                     }
                 }
                 Section {
                     ForEach(model.projects) { p in
-                        SidebarRow(title: p.name, icon: "tshirt").tag(SidebarItem.project(p.id))
+                        SidebarRow(title: p.name, icon: "tshirt", colour: Yarn.orange).tag(SidebarItem.project(p.id))
                     }
                     if model.projects.isEmpty {
                         Text("Open a pattern and choose New Project").scaledFont(.caption).foregroundStyle(.secondary)
                     }
                 } header: {
-                    Text("Projects").scaledFont(.subheadline, bold: true)
+                    SidebarHeader(title: "Projects", colour: Yarn.orange)
                 }
                 Section {
                     ForEach(model.people) { p in
-                        SidebarRow(title: p.name, icon: "person").tag(SidebarItem.person(p.id))
+                        SidebarRow(title: p.name, icon: "person", colour: Yarn.pink).tag(SidebarItem.person(p.id))
                     }
-                    Button { model.addPerson() } label: { SidebarRow(title: "Add Person", icon: "plus") }
-                        .buttonStyle(.borderless)
+                    Button { model.addPerson() } label: { SidebarRow(title: "Add Person", icon: "plus.circle.fill", colour: Yarn.pink) }
+                        .buttonStyle(.plain)
                 } header: {
-                    Text("People").scaledFont(.subheadline, bold: true)
+                    SidebarHeader(title: "People", colour: Yarn.pink)
                 }
                 Section {
                     ForEach(model.patterns) { p in
-                        SidebarRow(title: p.name, icon: "doc.richtext", starred: p.favorite).tag(SidebarItem.pattern(p.id))
+                        SidebarRow(title: p.name, icon: "doc.richtext", colour: Yarn.purple, starred: p.favorite).tag(SidebarItem.pattern(p.id))
                             .contextMenu { favoriteButton(p) }
                     }
-                    Button { model.choosingImport = true } label: { SidebarRow(title: "Import Pattern…", icon: "square.and.arrow.down") }
-                        .buttonStyle(.borderless)
-                    Button { model.newDesign() } label: { SidebarRow(title: "Design a Sweater…", icon: "wand.and.stars") }
-                        .buttonStyle(.borderless)
+                    Button { model.choosingImport = true } label: { SidebarRow(title: "Import Pattern…", icon: "square.and.arrow.down.fill", colour: Yarn.leaf) }
+                        .buttonStyle(.plain)
+                    Button { model.newDesign() } label: { SidebarRow(title: "Design a Sweater…", icon: "wand.and.stars", colour: Yarn.green) }
+                        .buttonStyle(.plain)
                 } header: {
-                    Text("Patterns").scaledFont(.subheadline, bold: true)
+                    SidebarHeader(title: "Patterns", colour: Yarn.purple)
                 }
             }
             .navigationSplitViewColumnWidth(min: sidebarWidth, ideal: sidebarWidth + 40)
@@ -113,6 +113,7 @@ extension RootView {
 struct SidebarRow: View {
     let title: String
     let icon: String
+    var colour = Color.accentColor
     var starred = false
     @AppStorage(TextSize.key) private var size = TextSize.standard
 
@@ -120,10 +121,12 @@ struct SidebarRow: View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: size.points(.body) * 0.95))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(colour)
                 .frame(width: size.points(.body) * 1.4)
+            // Explicit, so rows that are buttons don't draw their text in black.
             Text(title)
                 .font(.system(size: size.points(.body)))
+                .foregroundStyle(.primary)
                 .lineLimit(2)
             if starred {
                 Spacer(minLength: 4)
@@ -139,15 +142,15 @@ struct SidebarRow: View {
     }
 }
 
-struct WelcomeView: View {
+/// A sidebar section title with a dot of its colour.
+struct SidebarHeader: View {
+    let title: String
+    let colour: Color
+
     var body: some View {
-        VStack(spacing: 10) {
-            Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 96, height: 96)
-            Text("Knittany").scaledFont(.title)
-            Text("1. Add the person you're knitting for and enter their measurements.\n2. Import a pattern PDF and check what was read, or design a sweater from scratch.\n3. Open the pattern and choose New Project.")
-                .multilineTextAlignment(.leading)
-                .foregroundStyle(.secondary)
+        HStack(spacing: 6) {
+            Circle().fill(colour).frame(width: 8, height: 8)
+            Text(title).scaledFont(.subheadline, bold: true)
         }
-        .padding(40)
     }
 }

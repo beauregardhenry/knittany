@@ -54,6 +54,7 @@ struct PersonView: View {
         }
         .formStyle(.grouped)
         .navigationTitle(person.name)
+        .rainbowTop()
         .onChange(of: person) { model.update(person) }
         .confirmationDialog("Delete \(person.name)?", isPresented: $confirmingDelete) {
             Button("Delete", role: .destructive) { model.deletePerson(person.id) }

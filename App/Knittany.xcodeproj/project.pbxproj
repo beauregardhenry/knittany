@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		126FE94CC8D257498A559B7D /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A862BE2348B476A577EE99C2 /* Keychain.swift */; };
+		2B0911EB800606959254A033 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29FE794D5D71B083A91E380 /* WelcomeView.swift */; };
 		2BB10C9DE911B622329D9C9F /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6D0FFF0EDAF2B5E809C016 /* Fields.swift */; };
 		2CF7BEB8A6D6E842105BA8F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80637F163EB7F2CC4245A741 /* Assets.xcassets */; };
 		2D0E4E04CB9B1135012310AE /* ImportReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8869F8C072E97ED1F343DFA /* ImportReviewView.swift */; };
@@ -18,6 +19,7 @@
 		6C9EE5F63825FB5B44590A8F /* KnitImport in Frameworks */ = {isa = PBXBuildFile; productRef = 858C4190EAEEAF687EC8179C /* KnitImport */; };
 		814585CFEB9FA5796FC00924 /* TextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AED47F9CE10A4CAA89131E91 /* TextSize.swift */; };
 		AA56D041B202375F52806BC1 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76904FB20AC8D5A93255CAD4 /* ProjectView.swift */; };
+		ADBC42925C28E874EE233124 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBA552CFC317590689F9E96 /* Theme.swift */; };
 		BD80E7448E90B9E8EABBCDE5 /* KnitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9016B8410616B67EAC30FD5D /* KnitView.swift */; };
 		C6FFD5D9C7DA9AA35671C24D /* KnittanyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510D3FB95CF04A6C616027A6 /* KnittanyApp.swift */; };
 		CEBAFF0C1A7C3B6CE0F2FB93 /* DesignView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BB25B981F08A75B5B88A46 /* DesignView.swift */; };
@@ -41,6 +43,8 @@
 		A862BE2348B476A577EE99C2 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		AA09324A3B84EF663D1D1C99 /* PatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternView.swift; sourceTree = "<group>"; };
 		AED47F9CE10A4CAA89131E91 /* TextSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSize.swift; sourceTree = "<group>"; };
+		AFBA552CFC317590689F9E96 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		B29FE794D5D71B083A91E380 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		CA60A4C1F0F827D3EB5E7D97 /* Knittany.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Knittany.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D12A13B09897DF6855D54047 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		F571E39346D8C1BBCFBC903B /* LibraryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryModel.swift; sourceTree = "<group>"; };
@@ -79,6 +83,8 @@
 				D12A13B09897DF6855D54047 /* RootView.swift */,
 				88D086A4348951C5C964A074 /* SettingsView.swift */,
 				AED47F9CE10A4CAA89131E91 /* TextSize.swift */,
+				AFBA552CFC317590689F9E96 /* Theme.swift */,
+				B29FE794D5D71B083A91E380 /* WelcomeView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -199,6 +205,8 @@
 				5C0F02AC50F1962EDCB8DC8C /* RootView.swift in Sources */,
 				FBA13A9F56D3CF23EDBBCA86 /* SettingsView.swift in Sources */,
 				814585CFEB9FA5796FC00924 /* TextSize.swift in Sources */,
+				ADBC42925C28E874EE233124 /* Theme.swift in Sources */,
+				2B0911EB800606959254A033 /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +281,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -300,6 +309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;

@@ -91,6 +91,7 @@ struct PatternView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(pattern.name)
+            .rainbowTop()
             .toolbar {
                 Button {
                     model.setFavorite(!entry.favorite, for: entry.id)

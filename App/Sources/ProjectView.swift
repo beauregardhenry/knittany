@@ -60,6 +60,7 @@ struct ProjectView: View {
             }
         }
         .navigationTitle(project.name)
+        .rainbowTop()
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Picker("View", selection: $mode) {
